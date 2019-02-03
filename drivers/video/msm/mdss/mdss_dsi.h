@@ -1,5 +1,5 @@
 /* Copyright (c) 2012-2017, The Linux Foundation. All rights reserved.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -228,6 +228,10 @@ enum dsi_pm_type {
 extern struct device dsi_dev;
 extern u32 dsi_irq;
 extern struct mdss_dsi_ctrl_pdata *ctrl_list[];
+
+#ifdef CONFIG_PROJECT_TIFFANY
+extern int ft8716_gesture_func_on ;
+#endif
 
 #ifdef CONFIG_PROJECT_VINCE
 extern bool synaptics_gesture_func_on;
@@ -736,7 +740,7 @@ struct NVT_CSOT_ESD{
 	bool ESD_TE_status;
 };
 
-struct NVT_CSOT_ESD *get_nvt_csot_esd_status(void);
+struct NVT_CSOT_ESD* get_nvt_csot_esd_status(void);
 #endif
 
 void mdss_dsi_panel_cmds_send(struct mdss_dsi_ctrl_pdata *ctrl,

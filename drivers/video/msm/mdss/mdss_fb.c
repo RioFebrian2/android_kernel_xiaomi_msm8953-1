@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2007 Google Incorporated
  * Copyright (c) 2008-2018, The Linux Foundation. All rights reserved.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -834,41 +834,41 @@ static ssize_t mdss_fb_change_dispparam(struct device *dev,
 
     sscanf(buf, "%x", &change_par_buf) ;
 
-	if (!change_par_ctrl){
+	if(!change_par_ctrl){
 		pr_err("%s: change_par_ctrl is NULL, change lcm effect failed\n",__func__);
 		return 0;
 	}
 
-	CABC_on_cmds_point = &change_par_ctrl->CABC_on_cmds;
-	CABC_off_cmds_point = &change_par_ctrl->CABC_off_cmds;
-	CE_on_cmds_point = &change_par_ctrl->CE_on_cmds;
-	CE_off_cmds_point = &change_par_ctrl->CE_off_cmds;
-	cold_gamma_cmds_point = &change_par_ctrl->cold_gamma_cmds;
-	warm_gamma_cmds_point = &change_par_ctrl->warm_gamma_cmds;
-	default_gamma_cmds_point = &change_par_ctrl->default_gamma_cmds;
-	white_gamma_cmds_point = &change_par_ctrl->white_gamma_cmds;
-	PM1_cmds_point = &change_par_ctrl->PM1_cmds;
-	PM2_cmds_point = &change_par_ctrl->PM2_cmds;
-	PM3_cmds_point = &change_par_ctrl->PM3_cmds;
-	PM4_cmds_point = &change_par_ctrl->PM4_cmds;
-	PM5_cmds_point = &change_par_ctrl->PM5_cmds;
-	PM6_cmds_point = &change_par_ctrl->PM6_cmds;
-	PM7_cmds_point = &change_par_ctrl->PM7_cmds;
-	PM8_cmds_point = &change_par_ctrl->PM8_cmds;
+	CABC_on_cmds_point=&change_par_ctrl->CABC_on_cmds;
+	CABC_off_cmds_point=&change_par_ctrl->CABC_off_cmds;
+	CE_on_cmds_point=&change_par_ctrl->CE_on_cmds;
+	CE_off_cmds_point=&change_par_ctrl->CE_off_cmds;
+	cold_gamma_cmds_point=&change_par_ctrl->cold_gamma_cmds;
+	warm_gamma_cmds_point=&change_par_ctrl->warm_gamma_cmds;
+	default_gamma_cmds_point=&change_par_ctrl->default_gamma_cmds;
+	white_gamma_cmds_point=&change_par_ctrl->white_gamma_cmds;
+	PM1_cmds_point=&change_par_ctrl->PM1_cmds;
+	PM2_cmds_point=&change_par_ctrl->PM2_cmds;
+	PM3_cmds_point=&change_par_ctrl->PM3_cmds;
+	PM4_cmds_point=&change_par_ctrl->PM4_cmds;
+	PM5_cmds_point=&change_par_ctrl->PM5_cmds;
+	PM6_cmds_point=&change_par_ctrl->PM6_cmds;
+	PM7_cmds_point=&change_par_ctrl->PM7_cmds;
+	PM8_cmds_point=&change_par_ctrl->PM8_cmds;
 #ifdef CONFIG_PROJECT_VINCE
-	sRGB_on_cmds_point = &change_par_ctrl->sRGB_on_cmds;
-	sRGB_off_cmds_point = &change_par_ctrl->sRGB_off_cmds;
+	sRGB_on_cmds_point=&change_par_ctrl->sRGB_on_cmds;
+	sRGB_off_cmds_point=&change_par_ctrl->sRGB_off_cmds;
 #endif
 
-	if ((change_par_buf >= 0x01) && (change_par_buf <= 0x0c)) {
+	if( ( change_par_buf >= 0x01 ) && ( change_par_buf <= 0x0c ) ) {
 		LCM_effect[0] = change_par_buf;
-	} else if ((change_par_buf == 0x10) || (change_par_buf == 0xf0)) {
+	} else if( ( change_par_buf == 0x10 ) || ( change_par_buf == 0xf0 ) ) {
 		LCM_effect[1] = change_par_buf;
-	} else if ((change_par_buf == 0x100) || (change_par_buf == 0xf00)) {
+	} else if( ( change_par_buf == 0x100 ) || ( change_par_buf == 0xf00 ) ) {
 		LCM_effect[2] = change_par_buf;
 	}
 	#ifdef CONFIG_PROJECT_VINCE
-	else if ((change_par_buf == 0x1000) || (change_par_buf == 0xf000)) {
+	else if( ( change_par_buf == 0x1000 ) || ( change_par_buf == 0xf000 ) ) {
 		LCM_effect[3] = change_par_buf;
 	}
 	#endif
@@ -932,7 +932,7 @@ static ssize_t mdss_fb_get_dispparam(struct device *dev,
 		LCM_effect[0] , LCM_effect[1] ,LCM_effect[2] , LCM_effect[3]);
 	#else
 	ret = scnprintf(buf, PAGE_SIZE, "%x%x%x\n",
-		LCM_effect[0] , LCM_effect[1] ,LCM_effect[2]);
+		LCM_effect[0] , LCM_effect[1] ,LCM_effect[2] );
 	#endif
 	return ret;
 }
@@ -942,7 +942,7 @@ bool set_white_point_x = true;
 static ssize_t mdss_fb_set_wpoint(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t len)
 {
-	if (set_white_point_x)
+	if(set_white_point_x)
 	{
 		sscanf(buf, "%3d", &white_point_num_x) ;
 		set_white_point_x = false;
@@ -1472,7 +1472,7 @@ static int mdss_fb_init_panel_modes(struct msm_fb_data_type *mfd,
 	return 0;
 }
 
-static int ffbm_first_close_bl;
+static int ffbm_first_close_bl = false;
 static int mdss_fb_probe(struct platform_device *pdev)
 {
 	struct msm_fb_data_type *mfd = NULL;
@@ -1569,7 +1569,7 @@ static int mdss_fb_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, mfd);
 
-	if (strnstr(saved_command_line, "androidboot.mode=ffbm-01",
+	if(strnstr(saved_command_line, "androidboot.mode=ffbm-01",
 			strlen(saved_command_line))){
 		ffbm_first_close_bl = true;
 		pr_err("We are in ffbm-01 mode!\n");
@@ -2018,7 +2018,7 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 		 */
 		if (mfd->bl_level_scaled == temp) {
 			mfd->bl_level = bkl_lvl;
-			if ((0 == temp) && (ffbm_first_close_bl == true)){
+			if((0 == temp) && (ffbm_first_close_bl == true)){
 				pdata->set_backlight(pdata, temp);
 				ffbm_first_close_bl = false;
 			}

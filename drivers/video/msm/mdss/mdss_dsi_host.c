@@ -1,5 +1,5 @@
 /* Copyright (c) 2012-2017, The Linux Foundation. All rights reserved.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -1164,7 +1164,7 @@ int mdss_dsi_reg_status_check(struct mdss_dsi_ctrl_pdata *ctrl_pdata)
 	/*Add by HQ-zmc [Date: 2017-12-18 11:16:00]*/
 	struct NVT_CSOT_ESD *nvt_csot_esd_status = get_nvt_csot_esd_status();
 
-	if (nvt_csot_esd_status == NULL){
+	if(nvt_csot_esd_status == NULL){
 		pr_err("%s: Invalid nvt_csot_esd_status\n", __func__);
 		return 0;
 	}
@@ -1222,7 +1222,7 @@ int mdss_dsi_reg_status_check(struct mdss_dsi_ctrl_pdata *ctrl_pdata)
 	pr_debug("%s: Read register done with ret: %d\n", __func__, ret);
 
 	/*Add by HQ-zmc [Date: 2017-12-19 18:39:41]*/
-	if ((ret <= 0) && (!nvt_csot_esd_status->ESD_TE_status))
+	if((ret <= 0)&&(!nvt_csot_esd_status->ESD_TE_status))
 		nvt_csot_esd_status->ESD_TE_status = true;
 
 	return ret;
@@ -1297,11 +1297,11 @@ extern u32 te_count;
 */
 int mdss_dsi_TE_NT35596_check (struct mdss_dsi_ctrl_pdata *ctrl_pdata)
 {
-    int ret = 1;
+    int ret=1;
     /*Add by HQ-zmc [Date: 2017-12-18 11:16:00]*/
 	struct NVT_CSOT_ESD *nvt_csot_esd_status = get_nvt_csot_esd_status();
 
-    if (te_count < 48){
+    if(te_count < 48){
 		ret = 0;
 		nvt_csot_esd_status->ESD_TE_status = true;
 		pr_err("liujia te_count doesnt add as time");
@@ -1312,21 +1312,21 @@ int mdss_dsi_TE_NT35596_check (struct mdss_dsi_ctrl_pdata *ctrl_pdata)
 	return ret;
 }
 #else
-static u32 te_count_old = 1;
+static u32 te_count_old=1;
 
 int mdss_dsi_TE_NT35596_check (struct mdss_dsi_ctrl_pdata *ctrl_pdata)
 {
-       int ret = 1;
+       int ret=1;
 
-	if (te_count_old != te_count){
+	if(te_count_old != te_count){
 
 		te_count_old = te_count;
 	}else{
 		ret = 0;
 		pr_err("liujia te_count doesnt add as time");
 	}
-      if (te_count>=10000)
-      	{te_count = 0; }
+      if(te_count>=10000)
+      	{te_count=0;}
 
 	return ret;
 
