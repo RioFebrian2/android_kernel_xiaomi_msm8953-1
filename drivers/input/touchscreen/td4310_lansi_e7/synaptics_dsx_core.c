@@ -2,10 +2,10 @@
  * Synaptics DSX touchscreen driver
  *
  * Copyright (C) 2012-2016 Synaptics Incorporated. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * Copyright (C) 2012 Alexandra Chin <alexandra.chin@tw.synaptics.com>
  * Copyright (C) 2012 Scott Lin <scott.lin@tw.synaptics.com>
- * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ bool synaptics_gesture_func_on_lansi = 1;
 #define WAKEUP_OFF 4
 #define WAKEUP_ON 5
 
-#if ((defined CONFIG_PM) && (defined CONFIG_ENABLE_PM_TP_SUSPEND_RESUME))
+#if ((defined CONFIG_PM)&&(defined CONFIG_ENABLE_PM_TP_SUSPEND_RESUME))
 extern bool lcm_ffbm_mode;
 #endif
 
@@ -144,10 +144,10 @@ int synaptics_gesture_switch_lansi(struct input_dev *dev, unsigned int type, uns
 	unsigned int input ;
 	if (type == EV_SYN && code == SYN_CONFIG)
 	{
-		if (value == WAKEUP_OFF){
+		if(value == WAKEUP_OFF){
 			synaptics_gesture_func_on_lansi = false;
 			input = 0;
-		}else if (value == WAKEUP_ON){
+		}else if(value == WAKEUP_ON){
 			synaptics_gesture_func_on_lansi  = true;
 			input = 1;
 		}
@@ -944,7 +944,7 @@ static ssize_t synaptics_rmi4_wake_gesture_store(struct device *dev,
 	if (sscanf(buf, "%u", &input) != 1)
 		return -EINVAL;
 
-	if (input)
+	if(input)
 		input = 1;
 	   else
 	   	input = 0;
@@ -4458,7 +4458,7 @@ static int synaptics_rmi4_probe(struct platform_device *pdev)
 #if WAKEUP_GESTURE
     input_set_capability(rmi4_data->input_dev, EV_KEY, KEY_WAKEUP);
 
-   rmi4_data->input_dev->event = synaptics_gesture_switch_lansi;
+   rmi4_data->input_dev->event =synaptics_gesture_switch_lansi;
 #endif
 
 
@@ -4736,10 +4736,10 @@ exit:
 }
 #endif
 
-#if ((defined CONFIG_PM) && (defined CONFIG_ENABLE_PM_TP_SUSPEND_RESUME))
+#if ((defined CONFIG_PM)&&(defined CONFIG_ENABLE_PM_TP_SUSPEND_RESUME))
 static int synaptics_rmi4_pm_suspend(struct device *dev){
 	dev_info(rmi4_data->pdev->dev.parent, "Enter %s\n",__func__);
-	if (lcm_ffbm_mode){
+	if(lcm_ffbm_mode){
 		synaptics_rmi4_suspend(dev);
 	}
 	else{
@@ -4751,7 +4751,7 @@ static int synaptics_rmi4_pm_suspend(struct device *dev){
 
 static int synaptics_rmi4_pm_resume(struct device *dev){
 	dev_info(rmi4_data->pdev->dev.parent, "Enter %s\n",__func__);
-	if (lcm_ffbm_mode){
+	if(lcm_ffbm_mode){
 		synaptics_rmi4_resume(dev);
 	}
 	else{
@@ -4884,7 +4884,7 @@ exit:
 	return 0;
 }
 
-#if ((defined CONFIG_PM) && (defined CONFIG_ENABLE_PM_TP_SUSPEND_RESUME))
+#if ((defined CONFIG_PM)&&(defined CONFIG_ENABLE_PM_TP_SUSPEND_RESUME))
 static const struct dev_pm_ops synaptics_rmi4_dev_pm_ops = {
 
 	.suspend = synaptics_rmi4_pm_suspend,

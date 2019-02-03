@@ -2,10 +2,10 @@
  * Synaptics DSX touchscreen driver
  *
  * Copyright (C) 2012-2016 Synaptics Incorporated. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * Copyright (C) 2012 Alexandra Chin <alexandra.chin@tw.synaptics.com>
  * Copyright (C) 2012 Scott Lin <scott.lin@tw.synaptics.com>
- * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -781,7 +781,7 @@ static struct bin_attribute dev_attr_data = {
 };
 
 static struct device_attribute attrs[] = {
-	__ATTR(dorecovery, (S_IWUSR | S_IWGRP),
+	__ATTR(dorecovery, (S_IWUSR | S_IWGRP ),
 			synaptics_rmi4_show_error,
 			fwu_sysfs_do_recovery_store),
 	__ATTR(doreflash, (S_IWUSR | S_IWGRP),
@@ -848,12 +848,12 @@ static struct synaptics_rmi4_fwu_handle *fwu;
 #if defined(SYNAPTICS_LOCK_DOWN_INFO)
 #define CTP_PROC_LOCKDOWN_FILE "tp_lockdown_info"
 DEFINE_MUTEX(fwu_sysfs_mutex_lansi);
-static struct proc_dir_entry *ctp_lockdown_status_proc;
+static struct proc_dir_entry *ctp_lockdown_status_proc = NULL;
 static char tp_lockdown_info[128];
 
 static int fwu_do_read_customer_serialization_data(void);
 
-static int ctp_lockdown_proc_show(struct seq_file *file, void *data)
+static int ctp_lockdown_proc_show(struct seq_file *file, void* data)
 {
 	char temp[40] = {0};
 	fwu_do_read_customer_serialization_data();
@@ -866,7 +866,7 @@ static int ctp_lockdown_proc_show(struct seq_file *file, void *data)
 
 }
 
-static int ctp_lockdown_proc_open (struct inode *inode, struct file *file)
+static int ctp_lockdown_proc_open (struct inode* inode, struct file* file)
 {
 	return single_open(file, ctp_lockdown_proc_show, inode->i_private);
 }
@@ -3995,7 +3995,7 @@ static int fwu_do_read_customer_serialization_data(void)
 			pr_notice("%s: Permanent config data[%d] = 0x%02x\n", __func__, ii, fwu->read_config_buf[ii]);
 
  sprintf(temp,"%02x%02x%02x%02x%02x%02x%02x%02x", fwu->read_config_buf[0], fwu->read_config_buf[1], fwu->read_config_buf[2], fwu->read_config_buf[3], fwu->read_config_buf[4], fwu->read_config_buf[5], fwu->read_config_buf[6], fwu->read_config_buf[7]);
-printk("tp_lockdown info  : %s\n",temp);
+printk("tp_lockdown info  : %s\n",temp );
 strcpy(tp_lockdown_info,temp);
 
 
@@ -4476,7 +4476,7 @@ exit:
 
 	return retval;
 }
-static char tp_info_summary[80] = "";
+static char tp_info_summary[80]="";
 
 static int fwu_start_reflash(void)
 {
@@ -4485,7 +4485,7 @@ static int fwu_start_reflash(void)
 	bool do_rebuild = false;
 	const struct firmware *fw_entry = NULL;
 	struct synaptics_rmi4_data *rmi4_data = fwu->rmi4_data;
-	unsigned char config_ver[20] = {0};
+	unsigned char config_ver[20]={0};
 
 	char tp_temp_info[80];
 
@@ -5660,29 +5660,29 @@ static ssize_t fwu_sysfs_read_panel_color_show(struct device *dev,
 {
 	int ret = 0;
 
-	if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '1'))
+	if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '1'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x31 WHITE\n");
-	else if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '2'))
+	else if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '2'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x32 BLACK\n");
-	else if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '3'))
+	else if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '3'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x33 RED\n");
-	else if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '4'))
+	else if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '4'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x34 YELLOW\n");
-	else if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '5'))
+	else if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '5'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x35 GREEN\n");
-	else if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '6'))
+	else if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '6'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x36 PINK\n");
-	else if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '7'))
+	else if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '7'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x37 PURPLE\n");
-	else if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '8'))
+	else if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '8'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x38 GOLDEN\n");
-	else if ((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '9'))
+	else if((tp_lockdown_info[4] == '3') && (tp_lockdown_info[5] == '9'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x39 SLIVER\n");
-	else if ((tp_lockdown_info[4] == '4') && (tp_lockdown_info[5] == '0'))
+	else if((tp_lockdown_info[4] == '4') && (tp_lockdown_info[5] == '0'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x40 GRAY\n");
-	else if ((tp_lockdown_info[4] == '4') && (tp_lockdown_info[5] == '1'))
+	else if((tp_lockdown_info[4] == '4') && (tp_lockdown_info[5] == '1'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x41 SLIVER BLUE\n");
-	else if ((tp_lockdown_info[4] == '4') && (tp_lockdown_info[5] == '2'))
+	else if((tp_lockdown_info[4] == '4') && (tp_lockdown_info[5] == '2'))
 		ret = scnprintf(buf, PAGE_SIZE, "0x42 CORAL BLUE\n");
 
 	return ret;
@@ -5788,7 +5788,7 @@ static int synaptics_rmi4_fwu_init(struct synaptics_rmi4_data *rmi4_data)
 	struct pdt_properties pdt_props;
 
 #if defined(SYNAPTICS_LOCK_DOWN_INFO)
-	unsigned char lockdown[20] = {0};
+	unsigned char lockdown[20]={0};
 #endif
 	if (fwu) {
 		dev_dbg(rmi4_data->pdev->dev.parent,
@@ -5874,7 +5874,7 @@ static int synaptics_rmi4_fwu_init(struct synaptics_rmi4_data *rmi4_data)
 
 printk("before get_tddi_lockdown_data_lansi");
 
-	if (get_tddi_lockdown_data_lansi(lockdown, 20) < 0){
+	if(get_tddi_lockdown_data_lansi(lockdown, 20)<0){
 	printk("read lockdown fail\n");
 	}
 	printk("lockdown info =%02x,%02x,%02x,%02x,%02x,%02x,%02x,%02x\n",lockdown[4],lockdown[5],lockdown[6],lockdown[7],lockdown[8],lockdown[9],lockdown[10],lockdown[11]);

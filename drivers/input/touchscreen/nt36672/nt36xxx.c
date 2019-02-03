@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 - 2017 Novatek, Inc.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * $Revision: 15234 $
  * $Date: 2017-08-09 11:34:54 +0800 (週三, 09 八月 2017) $
@@ -48,7 +48,7 @@
 #if NVT_TOUCH_ESD_PROTECT
 static struct delayed_work nvt_esd_check_work;
 static struct workqueue_struct *nvt_esd_check_wq;
-static unsigned long irq_timer;
+static unsigned long irq_timer = 0;
 uint8_t esd_check = false;
 uint8_t esd_retry = 0;
 uint8_t esd_retry_max = 5;
@@ -247,10 +247,10 @@ int NVT_gesture_switch(struct input_dev *dev, unsigned int type, unsigned int co
 	unsigned int input ;
 	if (type == EV_SYN && code == SYN_CONFIG)
 	{
-		if (value == WAKEUP_OFF){
+		if(value == WAKEUP_OFF){
 			NVT_gesture_func_on = false;
 			input = 0;
-		}else if (value == WAKEUP_ON){
+		}else if(value == WAKEUP_ON){
 			NVT_gesture_func_on  = true;
 			input = 1;
 		}
@@ -260,7 +260,7 @@ int NVT_gesture_switch(struct input_dev *dev, unsigned int type, unsigned int co
 
 #endif
 
-static uint8_t bTouchIsAwake;
+static uint8_t bTouchIsAwake = 0;
 
 /*******************************************************
 Description:
@@ -361,11 +361,11 @@ return:
 *******************************************************/
 void nvt_sw_reset_idle(void)
 {
-	uint8_t buf[4] = {0};
+	uint8_t buf[4]={0};
 
 
-	buf[0] = 0x00;
-	buf[1] = 0xA5;
+	buf[0]=0x00;
+	buf[1]=0xA5;
 	CTP_I2C_WRITE(ts->client, I2C_HW_Address, buf, 2);
 
 	msleep(15);
@@ -502,13 +502,13 @@ int32_t nvt_check_fw_reset_state(RST_COMPLETE_STATE check_reset_state)
 
 		retry++;
 		if (check_reset_state <= RESET_STATE_REK) {
-	        if (unlikely(retry > 50)) {
+	        if(unlikely(retry > 50)) {
 	            NVT_ERR("error, retry=%d, buf[1]=0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X\n", retry, buf[1], buf[2], buf[3], buf[4], buf[5]);
 	            ret = -1;
 	            break;
 	        }
         } else {
-        	if (unlikely(retry > 100)) {
+        	if(unlikely(retry > 100)) {
 				NVT_ERR("error, retry=%d, buf[1]=0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X\n", retry, buf[1], buf[2], buf[3], buf[4], buf[5]);
 				ret = -1;
 				break;
@@ -594,7 +594,7 @@ info_retry:
 		ts->abs_y_max = TOUCH_DEFAULT_MAX_HEIGHT;
 		ts->max_button_num = TOUCH_KEY_NUM;
 
-		if (retry_count < 3) {
+		if(retry_count < 3) {
 			retry_count++;
 			NVT_ERR("retry_count=%d\n", retry_count);
 			goto info_retry;
@@ -762,14 +762,14 @@ int32_t nvt_get_xiaomi_lockdown_info(void)
 		NVT_LOG("Reservation byte: 0x%02X\n", data_buf[7]);
 
 		sprintf(temp,"%02x%02x%02x%02x%02x%02x%02x%02x", data_buf[0], data_buf[1], data_buf[2], data_buf[3], data_buf[4], data_buf[5], data_buf[6], data_buf[7]);
-		printk("tp_lockdown info  : %s\n",temp);
+		printk("tp_lockdown info  : %s\n",temp );
 		strcpy(nvt_tp_lockdown_info,temp);
 	}
 
 	return ret;
 }
 
-static char tp_info_summary[80] = "";
+static char tp_info_summary[80]="";
 static void nvt_register_hw_info(void)
 {
 	char tp_temp_info[80];
@@ -920,7 +920,7 @@ return:
 *******************************************************/
 static int32_t nvt_flash_proc_init(void)
 {
-	NVT_proc_entry = proc_create(DEVICE_NAME, 0444, NULL, &nvt_flash_fops);
+	NVT_proc_entry = proc_create(DEVICE_NAME, 0444, NULL,&nvt_flash_fops);
 	if (NVT_proc_entry == NULL) {
 		NVT_ERR("Failed!\n");
 		return -ENOMEM;
@@ -1076,7 +1076,7 @@ static uint8_t nvt_fw_recovery(uint8_t *point_data)
 	uint8_t detected = true;
 
 	/* check pattern */
-	for (i = 1 ; i < 7 ; i++) {
+	for (i=1 ; i<7 ; i++) {
 		if (point_data[i] != 0x77) {
 			detected = false;
 			break;
@@ -1184,7 +1184,7 @@ static void nvt_ts_work_func(struct work_struct *work)
 			input_y = (uint32_t)(point_data[position + 2] << 4) + (uint32_t) (point_data[position + 3] & 0x0F);
 			if ((input_x < 0) || (input_y < 0))
 				continue;
-			if ((input_x > ts->abs_x_max) || (input_y > ts->abs_y_max))
+			if ((input_x > ts->abs_x_max)||(input_y > ts->abs_y_max))
 				continue;
 			input_w = (uint32_t)(point_data[position + 4]);
 			if (input_w == 0)
@@ -1566,7 +1566,7 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 #if defined(CONFIG_FB)
 	ts->fb_notif.notifier_call = fb_notifier_callback;
 	ret = fb_register_client(&ts->fb_notif);
-	if (ret) {
+	if(ret) {
 		NVT_ERR("register fb_notifier failed. ret=%d\n", ret);
 		goto err_register_fb_notif_failed;
 	}
@@ -1575,7 +1575,7 @@ static int32_t nvt_ts_probe(struct i2c_client *client, const struct i2c_device_i
 	ts->early_suspend.suspend = nvt_ts_early_suspend;
 	ts->early_suspend.resume = nvt_ts_late_resume;
 	ret = register_early_suspend(&ts->early_suspend);
-	if (ret) {
+	if(ret) {
 		NVT_ERR("register early suspend failed. ret=%d\n", ret);
 		goto err_register_early_suspend_failed;
 	}
@@ -1694,7 +1694,7 @@ static int32_t nvt_ts_suspend(struct device *dev)
 #endif
 
 #if WAKEUP_GESTURE
-	if (NVT_gesture_func_on){
+	if(NVT_gesture_func_on){
 		/*add by HQ-zmc 20170923*/
 
 		buf[0] = EVENT_MAP_HOST_CMD;
@@ -1804,7 +1804,7 @@ static int32_t nvt_ts_resume(struct device *dev)
 
 		if (evdata && evdata->data && event == FB_EARLY_EVENT_BLANK) {
 			blank = evdata->data;
-			if ((*blank == FB_BLANK_POWERDOWN) && (nvt_csot_esd_status->ESD_TE_status == false)) {
+			if ((*blank == FB_BLANK_POWERDOWN)&&(nvt_csot_esd_status->ESD_TE_status == false)) {
 				nvt_ts_suspend(&ts->client->dev);
 			}
 		} else if (evdata && evdata->data && event == FB_EVENT_BLANK) {

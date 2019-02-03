@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 - 2017 Novatek, Inc.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * $Revision: 15234 $
  * $Date: 2017-08-09 11:34:54 +0800 (週三, 09 八月 2017) $
@@ -63,9 +63,9 @@ static struct proc_dir_entry *NVT_ctp_data_dump_proc;				/*add by HQ-zmc*/
 static struct proc_dir_entry *NVT_ctp_wakeup_switch;				/*add by HQ-zmc 20170926*/
 
 
-static uint8_t nvt_xiaomi_conf_info_fw_ver;
-static uint8_t nvt_xiaomi_conf_info_fae_id;
-static uint64_t nvt_xiaomi_conf_info_reservation;
+static uint8_t nvt_xiaomi_conf_info_fw_ver = 0;
+static uint8_t nvt_xiaomi_conf_info_fae_id = 0;
+static uint64_t nvt_xiaomi_conf_info_reservation = 0;
 
 /*******************************************************
 Description:
@@ -106,7 +106,7 @@ return:
 *******************************************************/
 uint8_t nvt_get_fw_pipe(void)
 {
-	uint8_t buf[8] = {0};
+	uint8_t buf[8]= {0};
 
 
 	buf[0] = 0xFF;
@@ -648,7 +648,7 @@ static const struct file_operations nvt_xiaomi_config_info_fops = {
 	.release = single_release,
 };
 
-static int ctp_lockdown_proc_show(struct seq_file *file, void *data)
+static int ctp_lockdown_proc_show(struct seq_file *file, void* data)
 {
 	char temp[40] = {0};
 
@@ -658,7 +658,7 @@ static int ctp_lockdown_proc_show(struct seq_file *file, void *data)
 	return 0;
 }
 
-static int ctp_lockdown_proc_open (struct inode *inode, struct file *file)
+static int ctp_lockdown_proc_open (struct inode* inode, struct file* file)
 {
 	return single_open(file, ctp_lockdown_proc_show, inode->i_private);
 }
@@ -800,7 +800,7 @@ static ssize_t nvt_xiaomi_wakeup_switch_write(struct file *file, const char __us
 	if (count > 0) {
 		if (get_user(input, buffer))
 			return -EFAULT;
-		if (input != '0')
+		if(input != '0')
 			NVT_gesture_func_on = true;
 		else
 			NVT_gesture_func_on = false;
@@ -837,7 +837,7 @@ return:
 *******************************************************/
 int32_t nvt_extra_proc_init(void)
 {
-	NVT_proc_fw_version_entry = proc_create(NVT_FW_VERSION, 0444, NULL, &nvt_fw_version_fops);
+	NVT_proc_fw_version_entry = proc_create(NVT_FW_VERSION, 0444, NULL,&nvt_fw_version_fops);
 	if (NVT_proc_fw_version_entry == NULL) {
 		NVT_ERR("create proc/nvt_fw_version Failed!\n");
 		return -ENOMEM;
@@ -845,7 +845,7 @@ int32_t nvt_extra_proc_init(void)
 		NVT_LOG("create proc/nvt_fw_version Succeeded!\n");
 	}
 
-	NVT_proc_baseline_entry = proc_create(NVT_BASELINE, 0444, NULL, &nvt_baseline_fops);
+	NVT_proc_baseline_entry = proc_create(NVT_BASELINE, 0444, NULL,&nvt_baseline_fops);
 	if (NVT_proc_baseline_entry == NULL) {
 		NVT_ERR("create proc/nvt_baseline Failed!\n");
 		return -ENOMEM;
@@ -853,7 +853,7 @@ int32_t nvt_extra_proc_init(void)
 		NVT_LOG("create proc/nvt_baseline Succeeded!\n");
 	}
 
-	NVT_proc_raw_entry = proc_create(NVT_RAW, 0444, NULL, &nvt_raw_fops);
+	NVT_proc_raw_entry = proc_create(NVT_RAW, 0444, NULL,&nvt_raw_fops);
 	if (NVT_proc_raw_entry == NULL) {
 		NVT_ERR("create proc/nvt_raw Failed!\n");
 		return -ENOMEM;
@@ -861,7 +861,7 @@ int32_t nvt_extra_proc_init(void)
 		NVT_LOG("create proc/nvt_raw Succeeded!\n");
 	}
 
-	NVT_proc_diff_entry = proc_create(NVT_DIFF, 0444, NULL, &nvt_diff_fops);
+	NVT_proc_diff_entry = proc_create(NVT_DIFF, 0444, NULL,&nvt_diff_fops);
 	if (NVT_proc_diff_entry == NULL) {
 		NVT_ERR("create proc/nvt_diff Failed!\n");
 		return -ENOMEM;
@@ -897,7 +897,7 @@ int32_t nvt_extra_proc_init(void)
 
 	/*add by HQ-zmc 20170926*/
 	NVT_ctp_wakeup_switch = proc_create(TP_WAKEUP_SWITCH, 0666, NULL, &nvt_xiaomi_wakeup_switch_fops);
-	if (NVT_ctp_wakeup_switch == NULL){
+	if(NVT_ctp_wakeup_switch == NULL){
 		NVT_ERR("create proc/%s Failed!\n", TP_WAKEUP_SWITCH);
 		return -ENOMEM;
 	}else{

@@ -2,10 +2,10 @@
  * Synaptics DSX touchscreen driver
  *
  * Copyright (C) 2012-2016 Synaptics Incorporated. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * Copyright (C) 2012 Alexandra Chin <alexandra.chin@tw.synaptics.com>
  * Copyright (C) 2012 Scott Lin <scott.lin@tw.synaptics.com>
- * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,6 @@
 #include <linux/platform_device.h>
 #include <linux/input/synaptics_dsx.h>
 #include "synaptics_dsx_core.h"
-
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 
@@ -233,44 +232,46 @@
 #define TX_NUM_DEFAULT 18
 #define RX_NUM_DEFAULT 32
 
-static short tddi_full_raw_limit_lower[TX_NUM_DEFAULT * RX_NUM_DEFAULT] = {2015,1942,1894,1875,1944,1888,1899,1907,1880,1878,1924,1877,1862,1898,1812,1841,1834,1798,1800,1829,1785,1803,1816,1782,1803,1827,1761,1758,1811,1776,1758,1905,
-1721,1717,1682,1669,1741,1688,1703,1714,1686,1687,1754,1689,1686,1734,1674,1719,1712,1679,1683,1719,1671,1691,1698,1668,1690,1717,1647,1649,1705,1665,1648,1790,
-1691,1702,1671,1662,1739,1681,1698,1705,1684,1687,1744,1693,1683,1739,1679,1727,1721,1689,1695,1732,1684,1705,1714,1681,1705,1734,1662,1665,1718,1677,1661,1805,
-1685,1695,1667,1658,1735,1677,1695,1703,1681,1686,1740,1689,1681,1741,1676,1727,1731,1693,1701,1738,1690,1715,1728,1688,1717,1743,1668,1676,1731,1679,1681,1820,
-1690,1701,1664,1664,1734,1676,1701,1703,1681,1692,1738,1688,1686,1739,1675,1729,1742,1700,1716,1749,1700,1731,1740,1699,1735,1760,1682,1692,1745,1691,1692,1834,
-1690,1696,1661,1662,1733,1676,1700,1707,1680,1691,1745,1688,1685,1736,1671,1726,1738,1696,1716,1750,1702,1736,1745,1703,1739,1765,1684,1695,1746,1689,1692,1831,
-1691,1696,1661,1662,1733,1675,1699,1707,1680,1691,1744,1687,1684,1734,1670,1723,1737,1695,1715,1748,1701,1735,1744,1707,1744,1772,1692,1707,1757,1699,1703,1845,
-1689,1693,1660,1662,1731,1675,1698,1705,1678,1691,1743,1687,1683,1733,1669,1721,1735,1695,1714,1746,1698,1732,1745,1705,1741,1768,1689,1705,1770,1701,1693,1814,
-1676,1657,1661,1646,1728,1675,1694,1706,1681,1688,1743,1694,1683,1745,1686,1732,1751,1719,1732,1772,1725,1754,1770,1736,1763,1794,1722,1724,1782,1739,1724,1882,
-1698,1678,1697,1670,1695,1709,1713,1703,1732,1688,1672,1737,1689,1690,1743,1713,1717,1736,1707,1717,1751,1713,1703,1765,1688,1683,1756,1699,1680,1699,1686,1809,
-1649,1661,1691,1636,1683,1689,1683,1679,1709,1660,1654,1712,1664,1674,1724,1690,1703,1720,1692,1714,1744,1705,1706,1762,1682,1686,1755,1694,1690,1730,1677,1815,
-1653,1670,1682,1637,1683,1690,1684,1681,1710,1661,1655,1714,1665,1674,1726,1690,1702,1721,1692,1715,1746,1706,1707,1764,1682,1685,1754,1691,1682,1720,1668,1802,
-1656,1673,1687,1639,1686,1694,1686,1682,1713,1662,1657,1716,1666,1675,1727,1690,1702,1722,1691,1714,1745,1703,1701,1755,1672,1672,1739,1677,1669,1705,1654,1783,
-1660,1680,1693,1644,1690,1698,1691,1687,1718,1665,1661,1720,1669,1679,1734,1697,1707,1727,1693,1713,1740,1699,1696,1740,1666,1667,1730,1671,1663,1698,1649,1776,
-1661,1678,1698,1646,1688,1697,1691,1685,1718,1667,1657,1723,1673,1678,1734,1702,1699,1719,1686,1699,1730,1687,1677,1728,1654,1647,1714,1656,1644,1679,1637,1755,
-1667,1675,1699,1652,1689,1699,1697,1685,1716,1672,1661,1728,1681,1683,1735,1705,1695,1712,1682,1693,1721,1681,1667,1717,1648,1640,1708,1650,1638,1674,1634,1749,
-1695,1683,1705,1658,1692,1702,1701,1689,1720,1674,1660,1726,1678,1678,1730,1701,1688,1702,1673,1691,1722,1670,1656,1708,1637,1627,1694,1638,1628,1660,1627,1740,
-1844,1811,1828,1782,1817,1824,1825,1812,1845,1796,1778,1841,1799,1798,1849,1822,1809,1845,1842,1857,1879,1844,1830,1881,1813,1802,1869,1814,1805,1840,1820,1979
+static short tddi_full_raw_limit_lower[TX_NUM_DEFAULT * RX_NUM_DEFAULT] = {
+	2015, 1942, 1894, 1875, 1944, 1888, 1899, 1907, 1880, 1878, 1924, 1877, 1862, 1898, 1812, 1841, 1834, 1798, 1800, 1829, 1785, 1803, 1816, 1782, 1803, 1827, 1761, 1758, 1811, 1776, 1758, 1905,
+	1721, 1717, 1682, 1669, 1741, 1688, 1703, 1714, 1686, 1687, 1754, 1689, 1686, 1734, 1674, 1719, 1712, 1679, 1683, 1719, 1671, 1691, 1698, 1668, 1690, 1717, 1647, 1649, 1705, 1665, 1648, 1790,
+	1691, 1702, 1671, 1662, 1739, 1681, 1698, 1705, 1684, 1687, 1744, 1693, 1683, 1739, 1679, 1727, 1721, 1689, 1695, 1732, 1684, 1705, 1714, 1681, 1705, 1734, 1662, 1665, 1718, 1677, 1661, 1805,
+	1685, 1695, 1667, 1658, 1735, 1677, 1695, 1703, 1681, 1686, 1740, 1689, 1681, 1741, 1676, 1727, 1731, 1693, 1701, 1738, 1690, 1715, 1728, 1688, 1717, 1743, 1668, 1676, 1731, 1679, 1681, 1820,
+	1690, 1701, 1664, 1664, 1734, 1676, 1701, 1703, 1681, 1692, 1738, 1688, 1686, 1739, 1675, 1729, 1742, 1700, 1716, 1749, 1700, 1731, 1740, 1699, 1735, 1760, 1682, 1692, 1745, 1691, 1692, 1834,
+	1690, 1696, 1661, 1662, 1733, 1676, 1700, 1707, 1680, 1691, 1745, 1688, 1685, 1736, 1671, 1726, 1738, 1696, 1716, 1750, 1702, 1736, 1745, 1703, 1739, 1765, 1684, 1695, 1746, 1689, 1692, 1831,
+	1691, 1696, 1661, 1662, 1733, 1675, 1699, 1707, 1680, 1691, 1744, 1687, 1684, 1734, 1670, 1723, 1737, 1695, 1715, 1748, 1701, 1735, 1744, 1707, 1744, 1772, 1692, 1707, 1757, 1699, 1703, 1845,
+	1689, 1693, 1660, 1662, 1731, 1675, 1698, 1705, 1678, 1691, 1743, 1687, 1683, 1733, 1669, 1721, 1735, 1695, 1714, 1746, 1698, 1732, 1745, 1705, 1741, 1768, 1689, 1705, 1770, 1701, 1693, 1814,
+	1676, 1657, 1661, 1646, 1728, 1675, 1694, 1706, 1681, 1688, 1743, 1694, 1683, 1745, 1686, 1732, 1751, 1719, 1732, 1772, 1725, 1754, 1770, 1736, 1763, 1794, 1722, 1724, 1782, 1739, 1724, 1882,
+	1698, 1678, 1697, 1670, 1695, 1709, 1713, 1703, 1732, 1688, 1672, 1737, 1689, 1690, 1743, 1713, 1717, 1736, 1707, 1717, 1751, 1713, 1703, 1765, 1688, 1683, 1756, 1699, 1680, 1699, 1686, 1809,
+	1649, 1661, 1691, 1636, 1683, 1689, 1683, 1679, 1709, 1660, 1654, 1712, 1664, 1674, 1724, 1690, 1703, 1720, 1692, 1714, 1744, 1705, 1706, 1762, 1682, 1686, 1755, 1694, 1690, 1730, 1677, 1815,
+	1653, 1670, 1682, 1637, 1683, 1690, 1684, 1681, 1710, 1661, 1655, 1714, 1665, 1674, 1726, 1690, 1702, 1721, 1692, 1715, 1746, 1706, 1707, 1764, 1682, 1685, 1754, 1691, 1682, 1720, 1668, 1802,
+	1656, 1673, 1687, 1639, 1686, 1694, 1686, 1682, 1713, 1662, 1657, 1716, 1666, 1675, 1727, 1690, 1702, 1722, 1691, 1714, 1745, 1703, 1701, 1755, 1672, 1672, 1739, 1677, 1669, 1705, 1654, 1783,
+	1660, 1680, 1693, 1644, 1690, 1698, 1691, 1687, 1718, 1665, 1661, 1720, 1669, 1679, 1734, 1697, 1707, 1727, 1693, 1713, 1740, 1699, 1696, 1740, 1666, 1667, 1730, 1671, 1663, 1698, 1649, 1776,
+	1661, 1678, 1698, 1646, 1688, 1697, 1691, 1685, 1718, 1667, 1657, 1723, 1673, 1678, 1734, 1702, 1699, 1719, 1686, 1699, 1730, 1687, 1677, 1728, 1654, 1647, 1714, 1656, 1644, 1679, 1637, 1755,
+	1667, 1675, 1699, 1652, 1689, 1699, 1697, 1685, 1716, 1672, 1661, 1728, 1681, 1683, 1735, 1705, 1695, 1712, 1682, 1693, 1721, 1681, 1667, 1717, 1648, 1640, 1708, 1650, 1638, 1674, 1634, 1749,
+	1695, 1683, 1705, 1658, 1692, 1702, 1701, 1689, 1720, 1674, 1660, 1726, 1678, 1678, 1730, 1701, 1688, 1702, 1673, 1691, 1722, 1670, 1656, 1708, 1637, 1627, 1694, 1638, 1628, 1660, 1627, 1740,
+	1844, 1811, 1828, 1782, 1817, 1824, 1825, 1812, 1845, 1796, 1778, 1841, 1799, 1798, 1849, 1822, 1809, 1845, 1842, 1857, 1879, 1844, 1830, 1881, 1813, 1802, 1869, 1814, 1805, 1840, 1820, 1979
 };
-
-static short tddi_full_raw_limit_upper[TX_NUM_DEFAULT * RX_NUM_DEFAULT] = {3359,3237,3157,3125,3241,3147,3165,3178,3133,3130,3207,3128,3104,3164,3020,3069,3058,2996,3001,3049,2976,3005,3026,2971,3005,3045,2935,2930,3019,2961,2930,3175,
-2869,2862,2803,2783,2902,2813,2839,2857,2810,2812,2924,2815,2810,2890,2791,2866,2853,2799,2806,2865,2785,2819,2831,2781,2817,2862,2745,2748,2841,2775,2748,2983,
-2819,2837,2786,2770,2899,2801,2830,2842,2807,2812,2907,2822,2805,2899,2798,2878,2868,2815,2825,2887,2807,2843,2857,2802,2842,2890,2771,2775,2864,2795,2768,3009,
-2809,2826,2779,2764,2893,2796,2826,2839,2803,2810,2901,2816,2802,2903,2794,2878,2885,2821,2835,2898,2817,2858,2880,2813,2863,2905,2780,2793,2885,2799,2802,3034,
-2818,2836,2773,2773,2890,2794,2835,2838,2801,2821,2897,2814,2810,2898,2791,2882,2904,2833,2860,2916,2834,2886,2900,2832,2892,2934,2803,2821,2908,2818,2820,3057,
-2816,2828,2768,2770,2888,2793,2833,2846,2800,2819,2909,2813,2808,2894,2786,2877,2898,2828,2860,2917,2837,2893,2908,2838,2899,2942,2807,2825,2910,2816,2821,3053,
-2818,2827,2768,2770,2888,2792,2833,2845,2800,2818,2907,2811,2808,2891,2783,2872,2895,2826,2859,2914,2835,2893,2908,2845,2907,2954,2820,2845,2928,2832,2838,3075,
-2816,2822,2767,2770,2886,2792,2831,2842,2798,2818,2906,2812,2805,2889,2781,2868,2892,2825,2857,2910,2831,2888,2909,2842,2902,2947,2815,2843,2951,2836,2822,3023,
-2793,2763,2769,2743,2880,2793,2824,2844,2801,2813,2905,2823,2805,2908,2811,2888,2919,2865,2887,2954,2876,2924,2950,2894,2939,2991,2870,2874,2971,2899,2874,3137,
-2830,2797,2829,2784,2825,2849,2855,2838,2886,2813,2787,2896,2816,2817,2906,2856,2862,2894,2845,2862,2919,2855,2839,2941,2814,2806,2927,2833,2801,2832,2810,3016,
-2749,2768,2818,2727,2805,2816,2805,2799,2848,2767,2756,2853,2774,2790,2874,2817,2838,2868,2820,2858,2907,2842,2843,2938,2803,2810,2925,2824,2817,2883,2795,3025,
-2755,2783,2804,2728,2805,2817,2808,2802,2851,2768,2759,2856,2776,2791,2877,2817,2837,2868,2820,2858,2910,2843,2845,2941,2803,2809,2923,2818,2804,2868,2781,3004,
-2761,2789,2811,2732,2810,2823,2810,2804,2855,2770,2762,2860,2776,2792,2879,2817,2837,2871,2819,2856,2909,2839,2835,2925,2787,2787,2899,2795,2781,2842,2757,2972,
-2767,2800,2821,2741,2817,2830,2818,2812,2864,2776,2768,2867,2783,2799,2890,2829,2846,2878,2822,2855,2900,2833,2827,2900,2778,2778,2883,2785,2772,2831,2749,2960,
-2768,2798,2831,2744,2813,2829,2819,2808,2864,2778,2762,2871,2789,2796,2890,2837,2831,2866,2810,2832,2884,2813,2795,2880,2757,2746,2857,2761,2740,2799,2728,2925,
-2779,2792,2832,2754,2815,2832,2828,2808,2861,2787,2768,2881,2802,2805,2892,2843,2826,2853,2804,2822,2869,2803,2778,2861,2748,2733,2847,2750,2731,2790,2723,2915,
-2825,2805,2841,2763,2820,2838,2835,2815,2867,2790,2768,2877,2796,2797,2884,2836,2813,2837,2789,2819,2871,2784,2761,2848,2729,2712,2824,2731,2714,2768,2712,2900,
-3074,3019,3047,2971,3028,3040,3042,3020,3075,2994,2964,3069,2999,2996,3081,3036,3015,3075,3070,3096,3131,3074,3050,3135,3023,3004,3115,3024,3009,3068,3034,3299
+	
+static short tddi_full_raw_limit_upper[TX_NUM_DEFAULT * RX_NUM_DEFAULT] = {
+	3359, 3237, 3157, 3125, 3241, 3147, 3165, 3178, 3133, 3130, 3207, 3128, 3104, 3164, 3020, 3069, 3058, 2996, 3001, 3049, 2976, 3005, 3026, 2971, 3005, 3045, 2935, 2930, 3019, 2961, 2930, 3175,
+	2869, 2862, 2803, 2783, 2902, 2813, 2839, 2857, 2810, 2812, 2924, 2815, 2810, 2890, 2791, 2866, 2853, 2799, 2806, 2865, 2785, 2819, 2831, 2781, 2817, 2862, 2745, 2748, 2841, 2775, 2748, 2983,
+	2819, 2837, 2786, 2770, 2899, 2801, 2830, 2842, 2807, 2812, 2907, 2822, 2805, 2899, 2798, 2878, 2868, 2815, 2825, 2887, 2807, 2843, 2857, 2802, 2842, 2890, 2771, 2775, 2864, 2795, 2768, 3009,
+	2809, 2826, 2779, 2764, 2893, 2796, 2826, 2839, 2803, 2810, 2901, 2816, 2802, 2903, 2794, 2878, 2885, 2821, 2835, 2898, 2817, 2858, 2880, 2813, 2863, 2905, 2780, 2793, 2885, 2799, 2802, 3034,
+	2818, 2836, 2773, 2773, 2890, 2794, 2835, 2838, 2801, 2821, 2897, 2814, 2810, 2898, 2791, 2882, 2904, 2833, 2860, 2916, 2834, 2886, 2900, 2832, 2892, 2934, 2803, 2821, 2908, 2818, 2820, 3057,
+	2816, 2828, 2768, 2770, 2888, 2793, 2833, 2846, 2800, 2819, 2909, 2813, 2808, 2894, 2786, 2877, 2898, 2828, 2860, 2917, 2837, 2893, 2908, 2838, 2899, 2942, 2807, 2825, 2910, 2816, 2821, 3053,
+	2818, 2827, 2768, 2770, 2888, 2792, 2833, 2845, 2800, 2818, 2907, 2811, 2808, 2891, 2783, 2872, 2895, 2826, 2859, 2914, 2835, 2893, 2908, 2845, 2907, 2954, 2820, 2845, 2928, 2832, 2838, 3075,
+	2816, 2822, 2767, 2770, 2886, 2792, 2831, 2842, 2798, 2818, 2906, 2812, 2805, 2889, 2781, 2868, 2892, 2825, 2857, 2910, 2831, 2888, 2909, 2842, 2902, 2947, 2815, 2843, 2951, 2836, 2822, 3023,
+	2793, 2763, 2769, 2743, 2880, 2793, 2824, 2844, 2801, 2813, 2905, 2823, 2805, 2908, 2811, 2888, 2919, 2865, 2887, 2954, 2876, 2924, 2950, 2894, 2939, 2991, 2870, 2874, 2971, 2899, 2874, 3137,
+	2830, 2797, 2829, 2784, 2825, 2849, 2855, 2838, 2886, 2813, 2787, 2896, 2816, 2817, 2906, 2856, 2862, 2894, 2845, 2862, 2919, 2855, 2839, 2941, 2814, 2806, 2927, 2833, 2801, 2832, 2810, 3016,
+	2749, 2768, 2818, 2727, 2805, 2816, 2805, 2799, 2848, 2767, 2756, 2853, 2774, 2790, 2874, 2817, 2838, 2868, 2820, 2858, 2907, 2842, 2843, 2938, 2803, 2810, 2925, 2824, 2817, 2883, 2795, 3025,
+	2755, 2783, 2804, 2728, 2805, 2817, 2808, 2802, 2851, 2768, 2759, 2856, 2776, 2791, 2877, 2817, 2837, 2868, 2820, 2858, 2910, 2843, 2845, 2941, 2803, 2809, 2923, 2818, 2804, 2868, 2781, 3004,
+	2761, 2789, 2811, 2732, 2810, 2823, 2810, 2804, 2855, 2770, 2762, 2860, 2776, 2792, 2879, 2817, 2837, 2871, 2819, 2856, 2909, 2839, 2835, 2925, 2787, 2787, 2899, 2795, 2781, 2842, 2757, 2972,
+	2767, 2800, 2821, 2741, 2817, 2830, 2818, 2812, 2864, 2776, 2768, 2867, 2783, 2799, 2890, 2829, 2846, 2878, 2822, 2855, 2900, 2833, 2827, 2900, 2778, 2778, 2883, 2785, 2772, 2831, 2749, 2960,
+	2768, 2798, 2831, 2744, 2813, 2829, 2819, 2808, 2864, 2778, 2762, 2871, 2789, 2796, 2890, 2837, 2831, 2866, 2810, 2832, 2884, 2813, 2795, 2880, 2757, 2746, 2857, 2761, 2740, 2799, 2728, 2925,
+	2779, 2792, 2832, 2754, 2815, 2832, 2828, 2808, 2861, 2787, 2768, 2881, 2802, 2805, 2892, 2843, 2826, 2853, 2804, 2822, 2869, 2803, 2778, 2861, 2748, 2733, 2847, 2750, 2731, 2790, 2723, 2915,
+	2825, 2805, 2841, 2763, 2820, 2838, 2835, 2815, 2867, 2790, 2768, 2877, 2796, 2797, 2884, 2836, 2813, 2837, 2789, 2819, 2871, 2784, 2761, 2848, 2729, 2712, 2824, 2731, 2714, 2768, 2712, 2900,
+	3074, 3019, 3047, 2971, 3028, 3040, 3042, 3020, 3075, 2994, 2964, 3069, 2999, 2996, 3081, 3036, 3015, 3075, 3070, 3096, 3131, 3074, 3050, 3135, 3023, 3004, 3115, 3024, 3009, 3068, 3034, 3299
 };
 
 #define FULL_RAW_CAP_TEST_LIMIT_LOWER 300
@@ -280,18 +281,18 @@ static short tddi_full_raw_limit_upper[TX_NUM_DEFAULT * RX_NUM_DEFAULT] = {3359,
 #define NOISE_TEST_NUM_OF_FRAMES 10
 
 #define EE_SHORT_TEST_LIMIT_PART1  60
-#define EE_SHORT_TEST_LIMIT_PART2  90
+#define EE_SHORT_TEST_LIMIT_PART2  90         // ( unit = ratio )
 
 #define AMP_OPEN_INT_DUR_ONE 145
 #define AMP_OPEN_INT_DUR_TWO 10
 #define AMP_OPEN_TEST_LIMIT_PHASE1_LOWER 500
 #define AMP_OPEN_TEST_LIMIT_PHASE1_UPPER 3000
 #define AMP_OPEN_TEST_LIMIT_PHASE2_LOWER 70
-#define AMP_OPEN_TEST_LIMIT_PHASE2_UPPER 130
+#define AMP_OPEN_TEST_LIMIT_PHASE2_UPPER 130  // ( unit = ratio )
 
 #define NUM_BUTTON 3
 #define ABS_0D_OPEN_FACTOR 15
-#define ABS_0D_OPEN_TEST_LIMIT 30
+#define ABS_0D_OPEN_TEST_LIMIT 30             // ( unit = ratio )
 
 #define ELEC_OPEN_TEST_TX_ON_COUNT 2
 #define ELEC_OPEN_TEST_RX_ON_COUNT 2
@@ -1225,10 +1226,10 @@ struct f54_control {
 };
 
 struct synaptics_rmi4_f54_handle {
-	bool is_burst;
+	bool is_burst;  // tddi f54 test reporting
 	bool no_auto_cal;
 	bool skip_preparation;
-	bool burst_read;
+	bool burst_read;  // tddi f54 test reporting
 	unsigned char status;
 	unsigned char intr_mask;
 	unsigned char intr_reg_num;
@@ -1676,27 +1677,27 @@ static struct synaptics_rmi4_f21_handle *f21;
 /* tddi f54 test reporting + */
 
 
-
+// size = tx_num * rx_num * 2 * sizeof(char)
 static unsigned char *g_tddi_full_raw_data_output;
 
 
-
+// size = tx_num * rx_num * sizeof(short)
 static signed short *g_tddi_noise_data_output;
 
 
-
+// size = tx_num * rx_num * sizeof(char)
 static unsigned char *g_tddi_ee_short_data_output;
 
 
-
+// size = tx_num * rx_num * sizeof(char)
 static unsigned char *g_tddi_amp_open_data_output;
 
 
 
+//static int *g_abs_0d_open_data_output;
 
 
-
-
+// true : fail to read image
 static bool g_flag_readrt_err;
 
 /* tddi f54 test reporting - */
@@ -2989,7 +2990,7 @@ static ssize_t test_sysfs_no_auto_cal_store(struct device *dev,
 	return count;
 }
 
-static int check_ito_test_flag = 2;
+static int check_ito_test_flag=2;    // 0 : pass  1: fail
 #ifdef SYNAPTICS_ESD_CHECK
 extern void synaptics_rmi4_esd_work(struct work_struct *work);
 #define SYNAPTICS_ESD_CHECK_CIRCLE 2*HZ
@@ -3094,14 +3095,14 @@ static ssize_t test_sysfs_read_report_show(struct device *dev,
 			for (jj = 0; jj < (rx_num - 1); jj++) {
 				cnt = snprintf(buf, PAGE_SIZE - count, "%-5d ",
 						*report_data_u16);
-				if (*report_data_16 <= 1700 || *report_data_16 >= 2300){
-					if ((jj == 24) && (ii != 1) && (ii != 6) && (ii != 12)){
-						check_ito_test_flag = 1;
+				if(*report_data_16 <= 1700 || *report_data_16 >= 2300 ){
+					if((jj == 24) && (ii !=1)&&(ii !=6)&&(ii != 12)){
+						check_ito_test_flag=1;
 					} else{
-						check_ito_test_flag = 0;
+						check_ito_test_flag=0;
 					}
 				}else{
-					check_ito_test_flag = 0;
+					check_ito_test_flag=0;
 				}
 				report_data_u16++;
 				buf += cnt;
@@ -3113,7 +3114,7 @@ static ssize_t test_sysfs_read_report_show(struct device *dev,
 			buf += cnt;
 			count += cnt;
 		}
-		if (1 == check_ito_test_flag){
+		if(1==check_ito_test_flag){
 			cnt = snprintf(buf, PAGE_SIZE - count,"fail\n");
 			buf += cnt;
 			count += cnt;
@@ -3364,7 +3365,7 @@ static ssize_t test_sysfs_ito_test_result_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 		printk("synaptics check_ito_test_flag = %d\n", check_ito_test_flag);
-		if (4 == check_ito_test_flag){
+		if(4==check_ito_test_flag){
 			return snprintf(buf, PAGE_SIZE, "%s\n","pass");
 		}else{
 			return snprintf(buf, PAGE_SIZE, "%s\n","fail");
@@ -3386,7 +3387,7 @@ static ssize_t test_sysfs_read_report(struct device *dev,
 	if (retval < 0)
 		goto exit;
 
-	if (do_preparation){
+	if(do_preparation){
 		retval = test_sysfs_do_preparation_store(dev, attr, cmd, 1);
 		if (retval < 0)
 			goto exit;
@@ -3419,27 +3420,27 @@ exit:
 	return retval;
 }
 
-static short find_median(short *pdata, int num)
+static short find_median(short* pdata, int num)
 {
 	int i,j;
 	short temp;
 	short *value;
 	short median;
 
-	value = (short *)kzalloc(num * sizeof(short), GFP_KERNEL);
+	value = (short *)kzalloc( num * sizeof(short), GFP_KERNEL);
 
-	for (i = 0; i < num; i++)
+	for(i=0; i < num; i++)
 		*(value+i) = *(pdata+i);
 
-
-	for (i = 1; i <= num-1; i++)
+	//sorting
+	for ( i=1; i <= num-1; i++)
 	{
-		for (j = 1; j <= num-i; j++)
+		for ( j=1; j <= num-i; j++)
 		{
 			if (*(value+j-1) <= *(value+j))
 			{
 			   temp = *(value+j-1);
-			   *(value+j-1) = *(value+j);
+			   *(value+j-1)= *(value+j);
 			   *(value+j) = temp;
 			}
 			else
@@ -3447,13 +3448,13 @@ static short find_median(short *pdata, int num)
 		}
 	}
 
-
-	if (num % 2 == 0)
-		median = (*(value+(num/2 -1)) + *(value+(num/2)))/2;
+	//calculation of median
+	if ( num % 2 == 0)
+		median = ( *(value+(num/2 -1)) + *(value+(num/2)) )/2;
 	else
 		median = *(value+(num/2));
 
-	if (value)
+	if(value)
 		kfree(value);
 
 	return median;
@@ -3482,7 +3483,7 @@ static int tddi_ratio_calculation(signed short *p_image)
 		goto exit;
 	}
 
-
+	// allocate the buffer for the median value in left/right half
 	p_right_median = (signed short *) kzalloc(rx_num * sizeof(short), GFP_KERNEL);
 	if (!p_right_median) {
 		dev_err(rmi4_data->pdev->dev.parent,
@@ -3500,7 +3501,7 @@ static int tddi_ratio_calculation(signed short *p_image)
 	}
 
 	p_right_column_buf = (signed short *) kzalloc(right_size * rx_num * sizeof(short), GFP_KERNEL);
-	if (!p_right_column_buf) {
+	if (!p_right_column_buf ) {
 		dev_err(rmi4_data->pdev->dev.parent,
 				"%s: Failed to alloc mem for p_right_column_buf\n", __func__);
 		retval = -ENOMEM;
@@ -3508,24 +3509,24 @@ static int tddi_ratio_calculation(signed short *p_image)
 	}
 
 	p_left_column_buf = (signed short *) kzalloc(left_size * rx_num * sizeof(short), GFP_KERNEL);
-	if (!p_left_column_buf) {
+	if (!p_left_column_buf ) {
 		dev_err(rmi4_data->pdev->dev.parent,
 				"%s: Failed to alloc mem for p_left_column_buf\n", __func__);
 		retval = -ENOMEM;
 		goto exit;
 	}
 
-
+	// divide the input image into left/right parts
 	if (f54->swap_sensor_side) {
 
-
+		// first row is left side data
 		p_data_16 = p_image;
 		for (i = 0; i < rx_num; i++) {
 			for (j = 0; j < left_size; j++) {
 				p_left_column_buf[i * left_size + j] = p_data_16[j * rx_num + i];
 			}
 		}
-
+		// right side data
 		p_data_16 = p_image + left_size * rx_num;
 		for (i = 0; i < rx_num; i++) {
 			for (j = 0; j < right_size; j++) {
@@ -3535,14 +3536,14 @@ static int tddi_ratio_calculation(signed short *p_image)
 	}
 	else {
 
-
+		// first row is right side data
 		p_data_16 = p_image;
 		for (i = 0; i < rx_num; i++) {
 			for (j = 0; j < right_size; j++) {
 				p_right_column_buf[i * right_size + j] = p_data_16[j * rx_num + i];
 			}
 		}
-
+		// left side data
 		p_data_16 = p_image + right_size * rx_num;
 		for (i = 0; i < rx_num; i++) {
 			for (j = 0; j < left_size; j++) {
@@ -3551,20 +3552,20 @@ static int tddi_ratio_calculation(signed short *p_image)
 		}
 	}
 
-
+	// find the median in every column
 	for (i = 0; i < rx_num; i++) {
 		p_left_median[i] = find_median(p_left_column_buf + i * left_size, left_size);
 		p_right_median[i] = find_median(p_right_column_buf + i * right_size, right_size);
 	}
 
 
-
+	// and calculate the ratio by using the median
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 
-
+			// calcueate the ratio
 			if (f54->swap_sensor_side) {
-
+				// first row is left side
 				if (i < left_size) {
 					temp = (signed int) p_image[i * rx_num + j];
 					temp = temp * 100 / p_left_median[j];
@@ -3574,7 +3575,7 @@ static int tddi_ratio_calculation(signed short *p_image)
 				}
 			}
 			else {
-
+				// first row is right side
 				if (i < right_size) {
 					temp = (signed int) p_image[i * rx_num + j];
 					temp = temp * 100 / p_right_median[j];
@@ -3584,7 +3585,7 @@ static int tddi_ratio_calculation(signed short *p_image)
 				}
 			}
 
-
+			// replace the original data with the calculated ratio
 			p_image[i * rx_num + j] = temp;
 		}
 	}
@@ -3619,7 +3620,7 @@ static ssize_t test_sysfs_tddi_ee_short_store(struct device *dev,
 	if (retval)
 		return retval;
 
-
+	//retval = count;
 
 	if (setting != 1)
 		return -EINVAL;
@@ -3636,7 +3637,7 @@ static ssize_t test_sysfs_tddi_ee_short_store(struct device *dev,
 		return -ENOMEM;
 	}
 
-
+	// allocate the internal buffer
 	tddi_rt95_part_one = kzalloc(buffer_size, GFP_KERNEL);
 	if (!tddi_rt95_part_one) {
 		dev_err(rmi4_data->pdev->dev.parent,
@@ -3693,7 +3694,7 @@ static ssize_t test_sysfs_tddi_ee_short_store(struct device *dev,
 						"%s: fail at (tx%-2d, rx%-2d) = %-4d in part 1 image (limit = %d)\n",
 						__func__, i, j, tddi_rt95_part_one[i*rx_num + j], EE_SHORT_TEST_LIMIT_PART1);
 
-				tddi_rt95_part_one[i*rx_num + j] = _TEST_FAIL;
+				tddi_rt95_part_one[i*rx_num + j] = _TEST_FAIL; // 1: fail
 			}
 			else {
 				tddi_rt95_part_one[i*rx_num + j] = _TEST_PASS;
@@ -3714,7 +3715,7 @@ static ssize_t test_sysfs_tddi_ee_short_store(struct device *dev,
 		offset += 2;
 	}
 
-
+	// calculate the ratio
 	tddi_ratio_calculation(tddi_rt95_part_two);
 
 #ifdef F54_SHOW_MAX_MIN
@@ -3731,7 +3732,7 @@ static ssize_t test_sysfs_tddi_ee_short_store(struct device *dev,
 						"%s: fail at (tx%-2d, rx%-2d) = %-4d in part 2 image (limit = %d)\n",
 						__func__, i, j, tddi_rt95_part_two[i*rx_num + j], EE_SHORT_TEST_LIMIT_PART2);
 
-				tddi_rt95_part_two[i*rx_num + j] = _TEST_FAIL;
+				tddi_rt95_part_two[i*rx_num + j] = _TEST_FAIL; // 1: fail
 			}
 			else {
 				tddi_rt95_part_two[i*rx_num + j] = _TEST_PASS;
@@ -3774,7 +3775,7 @@ static ssize_t test_sysfs_tddi_ee_short_show(struct device *dev,
 		return -EINVAL;
 
 
-
+	// output the error message
 	if (g_flag_readrt_err) {
 
 		kfree(g_tddi_ee_short_data_output);
@@ -3795,7 +3796,7 @@ static ssize_t test_sysfs_tddi_ee_short_show(struct device *dev,
 	kfree(g_tddi_ee_short_data_output);
 	g_tddi_ee_short_data_output = NULL;
 
-	if (!fail_count)
+	if(!fail_count)
 		check_ito_test_flag += 1;
 
 	return snprintf(buf, PAGE_SIZE, "%s\n", (fail_count == 0) ? "PASS" : "FAIL");
@@ -3827,7 +3828,7 @@ static ssize_t test_sysfs_tddi_noise_store(struct device *dev,
 	if (retval)
 		return retval;
 
-
+	//retval = count;
 
 	if (setting != 1)
 		return -EINVAL;
@@ -3843,7 +3844,7 @@ static ssize_t test_sysfs_tddi_noise_store(struct device *dev,
 				__func__);
 		return -ENOMEM;
 	}
-
+	// allocate the internal buffer
 	tddi_noise_data = kzalloc(buffer_size, GFP_KERNEL);
 	if (!tddi_noise_data) {
 		dev_err(rmi4_data->pdev->dev.parent,
@@ -3912,7 +3913,7 @@ static ssize_t test_sysfs_tddi_noise_store(struct device *dev,
 
 
 
-
+	// 1: fail / 0 : pass
 
 #ifdef F54_SHOW_MAX_MIN
 	min = tddi_noise_max[0];
@@ -3929,12 +3930,12 @@ static ssize_t test_sysfs_tddi_noise_store(struct device *dev,
 			max = max_t(signed short, g_tddi_noise_data_output[i*rx_num + j], max);
 #endif
 
-			if (g_tddi_noise_data_output[i*rx_num + j] > NOISE_TEST_LIMIT)  {
+			if (g_tddi_noise_data_output[i*rx_num + j] > NOISE_TEST_LIMIT )  {
 				dev_err(f54->rmi4_data->pdev->dev.parent,
 						"%s: fail at (tx%-2d, rx%-2d) = %-4d (limit = %d)\n",
 						__func__, i, j, g_tddi_noise_data_output[i*rx_num + j], NOISE_TEST_LIMIT);
 
-				g_tddi_noise_data_output[i*rx_num + j] = _TEST_FAIL;
+				g_tddi_noise_data_output[i*rx_num + j] = _TEST_FAIL; // 1: fail
 			}
 			else {
 				g_tddi_noise_data_output[i*rx_num + j] = _TEST_PASS;
@@ -3969,7 +3970,7 @@ static ssize_t test_sysfs_tddi_noise_show(struct device *dev,
 		return -EINVAL;
 
 
-
+	// output the error message
 	if (g_flag_readrt_err) {
 
 		kfree(g_tddi_noise_data_output);
@@ -3990,7 +3991,7 @@ static ssize_t test_sysfs_tddi_noise_show(struct device *dev,
 	kfree(g_tddi_noise_data_output);
 	g_tddi_noise_data_output = NULL;
 
-	if (!fail_count)
+	if(!fail_count)
 		check_ito_test_flag += 1;
 
 	return snprintf(buf, PAGE_SIZE, "%s\n", (fail_count == 0) ? "PASS" : "FAIL");
@@ -4010,12 +4011,12 @@ static ssize_t test_sysfs_tddi_full_raw_store(struct device *dev,
 	if (retval)
 		return retval;
 
-
+	//retval = count;
 
 	if (setting != 1)
 		return -EINVAL;
 
-
+	// increase the tx number, if the button existed
 	if (f55->extended_amp_btn) {
 		tx_num += 1;
 	}
@@ -4072,7 +4073,7 @@ static ssize_t test_sysfs_tddi_full_raw_show(struct device *dev,
 		return -EINVAL;
 
 
-
+	// output the error message
 	if (g_flag_readrt_err) {
 
 		kfree(g_tddi_full_raw_data_output);
@@ -4084,7 +4085,7 @@ static ssize_t test_sysfs_tddi_full_raw_show(struct device *dev,
 
 
 
-
+//	count += cnt;
 
 	report_data_16 = (unsigned short *)g_tddi_full_raw_data_output;
 
@@ -4102,28 +4103,28 @@ static ssize_t test_sysfs_tddi_full_raw_show(struct device *dev,
 			}*/
 			/*changed by HQ-zmc 20171025*/
 
-
-			if (((*report_data_16) < (*(tddi_full_raw_limit_lower+k))) || ((*report_data_16) > (*(tddi_full_raw_limit_upper+k)))) {
+			// 	return snprintf(buf, PAGE_SIZE, "%s\n", "fail: tddi_full_raw_limit == NULL");
+			if (((*report_data_16) < (*(tddi_full_raw_limit_lower+k)))|| ((*report_data_16) > (*(tddi_full_raw_limit_upper+k)))) {
 				fail_count ++;
 			}
 			k++;
 			report_data_16++;
 
-
+//			count += cnt;
 		}
 
 
 
-
+//		count += cnt;
 	}
 
+//	cnt = snprintf(buf, PAGE_SIZE - count, "\ndata range (max, min) = (%-4d, %-4d)\n", max, min);
 
 
+//	count += cnt;
 
 
-
-
-
+	// if the button existed, output the data of 0D button
 	if (f55->extended_amp_btn) {
 		cnt = snprintf(buf, PAGE_SIZE - count, "\namp button count = %d.\n", NUM_BUTTON);
 		buf += cnt;
@@ -4143,12 +4144,12 @@ static ssize_t test_sysfs_tddi_full_raw_show(struct device *dev,
 
 
 
-
+//	count++;
 
 	kfree(g_tddi_full_raw_data_output);
 	g_tddi_full_raw_data_output = NULL;
 
-	if (!fail_count)
+	if(!fail_count)
 		check_ito_test_flag += 1;
 
 	return snprintf(buf, PAGE_SIZE, "%s\n", (fail_count == 0) ? "PASS" : "FAIL");
@@ -4180,12 +4181,12 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 	if (retval)
 		return retval;
 
-
+	//retval = count;
 
 	if (setting != 1)
 		return -EINVAL;
 
-
+	// allocate the g_tddi_amp_open_data_output
 	if (g_tddi_amp_open_data_output)
 		kfree(g_tddi_amp_open_data_output);
 	g_tddi_amp_open_data_output = kzalloc(tx_num * rx_num, GFP_KERNEL);
@@ -4198,7 +4199,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 
 	g_flag_readrt_err = false;
 
-
+	// allocate the buffer
 	p_report_data_8 = kzalloc(tx_num * rx_num * 2, GFP_KERNEL);
 	if (!p_report_data_8) {
 		dev_err(rmi4_data->pdev->dev.parent,
@@ -4236,9 +4237,9 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 	}
 
 
-
+	// keep the original integration duration
 	if (f54->query.touch_controller_family != 2) {
-
+		// TODO : support touch controller family = 0 and 1
 		dev_err(rmi4_data->pdev->dev.parent,
 				"%s: not support touch controller family = 0 or 1 \n",
 				__func__);
@@ -4246,7 +4247,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 		goto exit;
 	}
 
-
+	// read the original integration duration
 	retval = synaptics_rmi4_reg_read(rmi4_data,
 			control.reg_99->address,
 			original_data_f54_ctrl99,
@@ -4285,7 +4286,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 		goto exit;
 	}
 
-
+	// grep the report image 92
 	retval = test_sysfs_read_report(dev, attr, "92", count,
 				false, false);
 	if (retval < 0) {
@@ -4300,12 +4301,12 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 	secure_memcpy(p_report_data_8, tx_num * rx_num * 2,
 		f54->report_data, f54->report_size, f54->report_size);
 
-
+	// normalize the rt92 image with 16-bit
 	k = 0;
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 			p_rt92_image_1[i * rx_num + j] =
-				(signed short)(p_report_data_8[k] & 0xff) | (signed short)(p_report_data_8[k + 1] << 8);
+				(signed short)(p_report_data_8[k] & 0xff ) | (signed short)(p_report_data_8[k + 1] << 8);
 
 			k += 2;
 		}
@@ -4339,7 +4340,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 		goto exit;
 	}
 
-
+	// grep the report image 92
 	retval = test_sysfs_read_report(dev, attr, "92", count,
 				false, false);
 	if (retval < 0) {
@@ -4354,12 +4355,12 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 	secure_memcpy(p_report_data_8, tx_num * rx_num * 2,
 		f54->report_data, f54->report_size, f54->report_size);
 
-
+	// normalize the rt92 image with 16-bit
 	k = 0;
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 			p_rt92_image_2[i * rx_num + j] =
-				(signed short)(p_report_data_8[k] & 0xff) | (signed short)(p_report_data_8[k + 1] << 8);
+				(signed short)(p_report_data_8[k] & 0xff ) | (signed short)(p_report_data_8[k + 1] << 8);
 
 			k += 2;
 		}
@@ -4419,7 +4420,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 						__func__, i, j, p_rt92_delta_image[i*rx_num + j],
 						AMP_OPEN_TEST_LIMIT_PHASE1_LOWER, AMP_OPEN_TEST_LIMIT_PHASE1_UPPER);
 
-				p_rt92_image_1[i*rx_num + j] = _TEST_FAIL;
+				p_rt92_image_1[i*rx_num + j] = _TEST_FAIL; // 1: fail
 			}
 			else {
 				p_rt92_image_1[i*rx_num + j] = _TEST_PASS;
@@ -4436,7 +4437,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 	/* data calculation and verification */
 	/* phase 2, the calculated ratio should be within the phase 2 test limit*/
 
-
+	// calculate the ratio
 	tddi_ratio_calculation(p_rt92_delta_image);
 
 #ifdef F54_SHOW_MAX_MIN
@@ -4456,7 +4457,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 						__func__, i, j, p_rt92_delta_image[i*rx_num + j],
 						AMP_OPEN_TEST_LIMIT_PHASE2_LOWER, AMP_OPEN_TEST_LIMIT_PHASE2_UPPER);
 
-				p_rt92_image_2[i*rx_num + j] = _TEST_FAIL;
+				p_rt92_image_2[i*rx_num + j] = _TEST_FAIL; // 1: fail
 			}
 			else {
 				p_rt92_image_2[i*rx_num + j] = _TEST_PASS;
@@ -4481,7 +4482,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 	retval = count;
 
 exit:
-
+	// release resource
 	kfree(p_rt92_image_1);
 	kfree(p_rt92_image_2);
 	kfree(p_rt92_delta_image);
@@ -4502,7 +4503,7 @@ static ssize_t test_sysfs_tddi_amp_open_show(struct device *dev,
 		return -EINVAL;
 
 
-
+	// output the error message
 	if (g_flag_readrt_err) {
 
 		kfree(g_tddi_amp_open_data_output);
@@ -4583,7 +4584,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 	if (setting != 1)
 		return -EINVAL;
 
-
+	// allocate the g_tddi_amp_open_data_output
 	if (g_tddi_amp_open_data_output)
 		kfree(g_tddi_amp_open_data_output);
 	g_tddi_amp_open_data_output = kzalloc(tx_num * rx_num, GFP_KERNEL);
@@ -4596,7 +4597,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 
 	g_flag_readrt_err = false;
 
-
+	// allocate the internal buffer
 	p_report_data_8 = kzalloc(tx_num * rx_num * 2, GFP_KERNEL);
 	if (!p_report_data_8) {
 		dev_err(rmi4_data->pdev->dev.parent,
@@ -4781,7 +4782,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 			p_rt92_image_1[i * rx_num + j] =
-				(signed short)(p_report_data_8[k] & 0xff) | (signed short)(p_report_data_8[k + 1] << 8);
+				(signed short)(p_report_data_8[k] & 0xff ) | (signed short)(p_report_data_8[k + 1] << 8);
 
 			k += 2;
 		}
@@ -4843,7 +4844,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 			p_rt92_image_2[i * rx_num + j] =
-				(signed short)(p_report_data_8[k] & 0xff) | (signed short)(p_report_data_8[k + 1] << 8);
+				(signed short)(p_report_data_8[k] & 0xff ) | (signed short)(p_report_data_8[k + 1] << 8);
 
 			k += 2;
 		}
@@ -4920,10 +4921,10 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 
 				dev_err(f54->rmi4_data->pdev->dev.parent,
 						"%s: fail at (tx%-2d, rx%-2d) = %-4d at phase 1 (limit: %d - %d)\n",
-						__func__, i, j, p_rt92_delta_image[i*rx_num + j],
+						__func__, i, j, p_rt92_delta_image[i*rx_num + j], 
 						ELEC_OPEN_TEST_LIMIT_ONE_LOWER, ELEC_OPEN_TEST_LIMIT_ONE_UPPER);
 
-				p_rt92_image_1[i*rx_num + j] = _TEST_FAIL;
+				p_rt92_image_1[i*rx_num + j] = _TEST_FAIL; // 1: fail
 			}
 			else {
 				p_rt92_image_1[i*rx_num + j] = _TEST_PASS;
@@ -4940,7 +4941,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 	/* phase 2, data calculation and verification */
 	/* the calculated ratio should be lower than the test limit */
 
-
+	// calculate the ratio
 	tddi_ratio_calculation(p_rt92_delta_image);
 
 #ifdef F54_SHOW_MAX_MIN
@@ -4957,10 +4958,10 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 
 				dev_err(f54->rmi4_data->pdev->dev.parent,
 						"%s: fail at (tx%-2d, rx%-2d) = %-4d at phase 2 (limit: %d - %d)\n",
-						__func__, i, j, p_rt92_delta_image[i*rx_num + j],
+						__func__, i, j, p_rt92_delta_image[i*rx_num + j], 
 						ELEC_OPEN_TEST_LIMIT_TWO_LOWER, ELEC_OPEN_TEST_LIMIT_TWO_UPPER);
 
-				p_rt92_image_2[i*rx_num + j] = _TEST_FAIL;
+				p_rt92_image_2[i*rx_num + j] = _TEST_FAIL; // 1: fail
 			}
 			else {
 				p_rt92_image_2[i*rx_num + j] = _TEST_PASS;
@@ -4984,7 +4985,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 	retval = count;
 
 exit:
-
+	// release resource
 	kfree(p_report_data_8);
 	kfree(p_rt92_image_1);
 	kfree(p_rt92_image_2);
@@ -5007,7 +5008,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_show(struct device *dev,
 		return -EINVAL;
 
 
-
+	// output the error message
 	if (g_flag_readrt_err) {
 
 		kfree(g_tddi_amp_open_data_output);
@@ -5028,7 +5029,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_show(struct device *dev,
 	kfree(g_tddi_amp_open_data_output);
 	g_tddi_amp_open_data_output = NULL;
 
-	if (!fail_count)
+	if(!fail_count)
 		check_ito_test_flag += 1;
 
 	return snprintf(buf, PAGE_SIZE, "%s\n", (fail_count == 0) ? "PASS" : "FAIL");
@@ -5182,7 +5183,7 @@ static void test_remove_sysfs(void)
 	return;
 }
 
-
+//pathc add by HQ-zmc 201709018
 static int tp_data_dump_proc_show(struct seq_file *m, void *v) {
 	int retval = 0;
 	int i, j, k;
@@ -5191,7 +5192,7 @@ static int tp_data_dump_proc_show(struct seq_file *m, void *v) {
 	short temp;
 	short *p_data = NULL;
 
-
+	//seq_printf(m, "Hello proc!\n");
 	seq_printf(m, "tx:%d\n", numberOfColums);
 	seq_printf(m, "rx:%d\n", numberOfRows);
 	retval = test_sysfs_read_report(NULL, NULL, "2", 2, true, false);
@@ -5203,7 +5204,7 @@ static int tp_data_dump_proc_show(struct seq_file *m, void *v) {
 			k = k + 2;
 		}
 	}
-
+	//seq_printf(m, "data report start\n");
 	for (i = 0; i < numberOfRows; i++) {
 		for (j = 0; j < numberOfColums; j++) {
 			seq_printf(m, "%-5d ", p_data[i * numberOfColums + j]);
@@ -5221,7 +5222,7 @@ static int tp_data_dump_proc_show(struct seq_file *m, void *v) {
 			k = k + 2;
 		}
 	}
-
+	//seq_printf(m, "data report start\n");
 	for (i = 0; i < numberOfRows; i++) {
 		for (j = 0; j < numberOfColums; j++) {
 			seq_printf(m, "%-5d ", p_data[i * numberOfColums + j]);
@@ -5233,7 +5234,7 @@ static int tp_data_dump_proc_show(struct seq_file *m, void *v) {
 	return 0;
 }
 
-static int tp_data_dump_proc_open(struct inode *inode, struct file *file) {
+static int tp_data_dump_proc_open(struct inode *inode, struct file * file) {
 	return single_open(file, tp_data_dump_proc_show, NULL);
 }
 
@@ -5250,7 +5251,7 @@ static int test_set_sysfs(void)
 	int retval;
 	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-
+	//add by HQ-zmc 20170918
 	proc_create("tp_data_dump", 0, NULL, &tp_data_dump_proc_fops);
 
 	f54->sysfs_dir = kobject_create_and_add(SYSFS_FOLDER_NAME,
@@ -7625,7 +7626,7 @@ static void __exit rmi4_test_module_exit(void)
 
 	wait_for_completion(&test_remove_complete_lansi);
 
-
+	//patch add by HQ-zmc 20170918
 	remove_proc_entry("tp_data_dump", NULL);
 
 	return;

@@ -1,5 +1,5 @@
 /* Copyright (c) 2014-2018 The Linux Foundation. All rights reserved.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -101,7 +101,6 @@ struct smbchg_chip {
 	struct device			*dev;
 	struct spmi_device		*spmi;
 	int				schg_version;
-	char			*debug_dump;
 
 	/* peripheral register address bases */
 	u16				chgr_base;
@@ -482,7 +481,6 @@ module_param_named(
 	int, S_IRUSR | S_IWUSR
 );
 
-static void dump_debug(struct smbchg_chip *chip);
 #define pr_smb(reason, fmt, ...)				\
 	do {							\
 		if (smbchg_debug_mask & (reason))		\
@@ -3125,7 +3123,7 @@ static int smbchg_system_temp_level_set(struct smbchg_chip *chip,
 			pr_err("Couldn't disable DC thermal ICL vote rc=%d\n",
 				rc);
 	} else {
-		if (hvdcp_type == POWER_SUPPLY_TYPE_USB_HVDCP || hvdcp_type == POWER_SUPPLY_TYPE_USB_HVDCP_3){
+		if( hvdcp_type == POWER_SUPPLY_TYPE_USB_HVDCP || hvdcp_type == POWER_SUPPLY_TYPE_USB_HVDCP_3){
 		thermal_icl_ma =
 			(int)hvdcp_thermal_mitigation[chip->therm_lvl_sel];
 		} else{
@@ -4548,12 +4546,12 @@ static void smbchg_cool_limit_work(struct work_struct *work)
 
 	temp = get_prop_batt_temp(chip);
 
-	if (temp > 0 && temp <= 50){
+	if(temp > 0 && temp <= 50){
 		mutex_lock(&chip->cool_current);
 		rc = smbchg_fastchg_current_comp_set(chip,250);
 		mutex_unlock(&chip->cool_current);
 	}
-	if (temp > 50 && temp < 150){
+	if(temp > 50 && temp < 150){
 		mutex_lock(&chip->cool_current);
 		rc = smbchg_fastchg_current_comp_set(chip,1200);
 		mutex_unlock(&chip->cool_current);
@@ -6158,6 +6156,7 @@ static enum power_supply_property smbchg_battery_properties[] = {
 	POWER_SUPPLY_PROP_HEALTH,
 	POWER_SUPPLY_PROP_TECHNOLOGY,
 	POWER_SUPPLY_PROP_SYSTEM_TEMP_LEVEL,
+	POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT,
 	POWER_SUPPLY_PROP_FLASH_CURRENT_MAX,
 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
 	POWER_SUPPLY_PROP_VOLTAGE_MAX,
@@ -6181,7 +6180,6 @@ static enum power_supply_property smbchg_battery_properties[] = {
 	POWER_SUPPLY_PROP_RESTRICTED_CHARGING,
 	POWER_SUPPLY_PROP_ALLOW_HVDCP3,
 	POWER_SUPPLY_PROP_MAX_PULSE_ALLOWED,
-	POWER_SUPPLY_PROP_DUMP_SRAM,
 };
 
 static int smbchg_battery_set_property(struct power_supply *psy,
@@ -6265,9 +6263,6 @@ static int smbchg_battery_set_property(struct power_supply *psy,
 			power_supply_changed(&chip->batt_psy);
 		}
 		break;
-	case POWER_SUPPLY_PROP_DUMP_SRAM:
-		dump_debug(chip);
-		break;
 	default:
 		return -EINVAL;
 	}
@@ -6291,7 +6286,6 @@ static int smbchg_battery_is_writeable(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_DP_DM:
 	case POWER_SUPPLY_PROP_RERUN_AICL:
 	case POWER_SUPPLY_PROP_RESTRICTED_CHARGING:
-	case POWER_SUPPLY_PROP_DUMP_SRAM:
 	case POWER_SUPPLY_PROP_ALLOW_HVDCP3:
 		rc = 1;
 		break;
@@ -6349,6 +6343,9 @@ static int smbchg_battery_get_property(struct power_supply *psy,
 		val->intval = chip->fastchg_current_ma * 1000;
 		break;
 	case POWER_SUPPLY_PROP_SYSTEM_TEMP_LEVEL:
+		val->intval = chip->therm_lvl_sel;
+		break;
+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT:
 		val->intval = chip->therm_lvl_sel;
 		break;
 	case POWER_SUPPLY_PROP_INPUT_CURRENT_MAX:
@@ -6414,9 +6411,6 @@ static int smbchg_battery_get_property(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_MAX_PULSE_ALLOWED:
 		val->intval = chip->max_pulse_allowed;
-		break;
-	case POWER_SUPPLY_PROP_DUMP_SRAM:
-		val->strval = chip->debug_dump;
 		break;
 	default:
 		return -EINVAL;
@@ -8314,92 +8308,6 @@ static int smbchg_parse_peripherals(struct smbchg_chip *chip)
 	return rc;
 }
 
-static void dump_debug(struct smbchg_chip *chip)
-{
-	int pos = 1;
-	u8 reg;
-	u16 addr;
-
-	/* charger peripheral */
-	for (addr = 0xB; addr <= 0x10; addr++)
-	{
-		pos -= 1;
-		smbchg_read(chip, &reg, chip->chgr_base + addr, 1);
-		pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "CHGR Status", chip->chgr_base + addr, reg);
-	}
-	for (addr = 0xF0; addr <= 0xFF; addr++)
-	{
-		pos -= 1;
-		smbchg_read(chip, &reg, chip->chgr_base + addr, 1);
-		pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "CHGR Config", chip->chgr_base + addr, reg);
-	}
-
-	/* battery interface peripheral */
-	pos -= 1;
-	smbchg_read(chip, &reg, chip->bat_if_base + RT_STS, 1);
-	pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "BAT_IF Status", chip->bat_if_base + RT_STS, reg);
-
-	pos-= 1;
-	smbchg_read(chip, &reg, chip->bat_if_base + CMD_CHG_REG, 1);
-	pos += sprintf(chip->debug_dump + pos , "dump_reg:%s-%04X=%02X   ", "BAT_IF Command", chip->bat_if_base + CMD_CHG_REG, reg);
-
-	for (addr = 0xF0; addr <= 0xFB; addr++)
-	{
-		pos -= 1;
-		smbchg_read(chip, &reg, chip->bat_if_base + addr, 1);
-		pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "BAT_IF Config", chip->bat_if_base + addr, reg);
-	}
-
-	/* usb charge path peripheral */
-	for (addr = 0x7; addr <= 0x10; addr++)
-	{
-		pos -= 1;
-		smbchg_read(chip, &reg, chip->usb_chgpth_base + addr, 1);
-		pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "USB Status", chip->usb_chgpth_base + addr, reg);
-	}
-
-	pos -= 1;
-	smbchg_read(chip, &reg, chip->usb_chgpth_base + CMD_IL, 1);
-	pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "USB Command", chip->usb_chgpth_base + CMD_IL, reg);
-
-	for (addr = 0xF0; addr <= 0xF5; addr++)
-	{
-		pos -= 1;
-		smbchg_read(chip, &reg, chip->usb_chgpth_base + addr, 1);
-		pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "USB Config", chip->usb_chgpth_base + addr, reg);
-	}
-
-	/* dc charge path peripheral */
-	pos -= 1;
-	smbchg_read(chip, &reg, chip->dc_chgpth_base + RT_STS, 1);
-	pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "DC Status", chip->dc_chgpth_base + RT_STS, reg);
-
-	for (addr = 0xF0; addr <= 0xF6; addr++)
-	{
-		pos -= 1;
-		smbchg_read(chip, &reg, chip->dc_chgpth_base + addr, 1);
-		pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "DC Config", chip->dc_chgpth_base + addr, reg);
-	}
-
-	/* misc peripheral */
-	pos -= 1;
-	smbchg_read(chip, &reg, chip->misc_base + IDEV_STS, 1);
-	pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "MISC Status", chip->misc_base + IDEV_STS, reg);
-
-	pos -= 1;
-	smbchg_read(chip, &reg, chip->misc_base + RT_STS, 1);
-	pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "MISC Status", chip->misc_base + RT_STS, reg);
-
-	for (addr = 0xF0; addr <= 0xF3; addr++)
-	{
-		pos -= 1;
-		smbchg_read(chip, &reg, addr, 1);
-		pos += sprintf(chip->debug_dump + pos, "dump_reg:%s-%04X=%02X   ", "MISC CFG", chip->misc_base + addr, reg);
-	}
-
-	pr_err("%s\n", chip->debug_dump);
-}
-
 static inline void dump_reg(struct smbchg_chip *chip, u16 addr,
 		const char *name)
 {
@@ -8762,8 +8670,6 @@ static int smbchg_probe(struct spmi_device *spmi)
 	mutex_init(&chip->usb_status_lock);
 	mutex_init(&chip->cool_current);
 	device_init_wakeup(chip->dev, true);
-	chip->debug_dump = kmalloc(sizeof(char)*2048, GFP_KERNEL);
-	memset(chip->debug_dump, '\0', sizeof(char)*2048);
 
 	rc = smbchg_parse_peripherals(chip);
 	if (rc) {

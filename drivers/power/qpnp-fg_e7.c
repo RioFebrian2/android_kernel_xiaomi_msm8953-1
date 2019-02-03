@@ -1,5 +1,5 @@
 /* Copyright (c) 2014-2017, The Linux Foundation. All rights reserved.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -639,7 +639,6 @@ struct fg_chip {
 	bool			batt_info_restore;
 	bool			*batt_range_ocv;
 	int			*batt_range_pct;
-	char			*debug_dump;
 };
 
 /* FG_MEMIF DEBUGFS structures */
@@ -710,7 +709,6 @@ static char *fg_supplicants[] = {
 	"fg_adc"
 };
 
-static void dump_debug(struct work_struct *work);
 #define DEBUG_PRINT_BUFFER_SIZE 64
 static void fill_string(char *str, size_t str_len, u8 *buf, int buf_len)
 {
@@ -4564,7 +4562,6 @@ static enum power_supply_property fg_power_props[] = {
 	POWER_SUPPLY_PROP_RESISTANCE,
 	POWER_SUPPLY_PROP_RESISTANCE_ID,
 	POWER_SUPPLY_PROP_BATTERY_TYPE,
-	POWER_SUPPLY_PROP_DUMP_SRAM,
 	POWER_SUPPLY_PROP_UPDATE_NOW,
 	POWER_SUPPLY_PROP_ESR_COUNT,
 	POWER_SUPPLY_PROP_VOLTAGE_MIN,
@@ -4593,9 +4590,6 @@ static int fg_power_get_property(struct power_supply *psy,
 			val->strval = loading_batt_type;
 		else
 			val->strval = chip->batt_type;
-		break;
-	case POWER_SUPPLY_PROP_DUMP_SRAM:
-		val->strval = chip->debug_dump;
 		break;
 	case POWER_SUPPLY_PROP_CAPACITY:
 		val->intval = get_prop_capacity(chip);
@@ -4707,9 +4701,6 @@ static int fg_power_set_property(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_WARM_TEMP:
 		rc = set_prop_jeita_temp(chip, FG_MEM_SOFT_HOT, val->intval);
-		break;
-	case POWER_SUPPLY_PROP_DUMP_SRAM:
-		dump_debug(&chip->dump_sram);
 		break;
 	case POWER_SUPPLY_PROP_UPDATE_NOW:
 		if (val->intval)
@@ -4837,7 +4828,6 @@ static int fg_property_is_writeable(struct power_supply *psy,
 	switch (psp) {
 	case POWER_SUPPLY_PROP_COOL_TEMP:
 	case POWER_SUPPLY_PROP_WARM_TEMP:
-	case POWER_SUPPLY_PROP_DUMP_SRAM:
 	case POWER_SUPPLY_PROP_CYCLE_COUNT_ID:
 	case POWER_SUPPLY_PROP_BATTERY_INFO:
 	case POWER_SUPPLY_PROP_BATTERY_INFO_ID:
@@ -4851,63 +4841,6 @@ static int fg_property_is_writeable(struct power_supply *psy,
 
 #define SRAM_DUMP_START		0x400
 #define SRAM_DUMP_LEN		0x200
-static void dump_debug(struct work_struct *work)
-{
-	int i, rc, pos = 0;
-	u8 *buffer, rt_sts;
-	char str[16];
-
-	struct fg_chip *chip = container_of(work,
-				struct fg_chip,
-				dump_sram);
-
-	buffer = devm_kzalloc(chip->dev, SRAM_DUMP_LEN, GFP_KERNEL);
-	memset(buffer, 0, SRAM_DUMP_LEN);
-
-	if (buffer == NULL) {
-		pr_err("Can't allocate buffer\n");
-		return;
-	}
-
-	rc = fg_read(chip, &rt_sts, INT_RT_STS(chip->soc_base), 1);
-	if (rc)
-		pr_err("spmi read failed: addr=%03X, rc=%d\n",
-				INT_RT_STS(chip->soc_base), rc);
-	else
-		pos += sprintf(chip->debug_dump + pos, "soc-rt-sts: 0x%0x    ", rt_sts);
-
-	pos -= 1;
-	rc = fg_read(chip, &rt_sts, INT_RT_STS(chip->batt_base), 1);
-	if (rc)
-		pr_err("spmi read failed: addr=%03X, rc=%d\n",
-				INT_RT_STS(chip->batt_base), rc);
-	else
-		pos += sprintf(chip->debug_dump + pos, "batt-rt-sts: 0x%0x    ", rt_sts);
-
-	pos -= 1;
-	rc = fg_read(chip, &rt_sts, INT_RT_STS(chip->mem_base), 1);
-	if (rc)
-		pr_err("spmi read failed: addr=%03X, rc=%d\n",
-				INT_RT_STS(chip->mem_base), rc);
-	else
-		pos += sprintf(chip->debug_dump + pos, "memif rt-sts: 0x%0x    ", rt_sts);
-
-	rc = fg_mem_read(chip, buffer, SRAM_DUMP_START, SRAM_DUMP_LEN, 0, 0);
-	if (rc) {
-		pr_err("dump failed: rc = %d\n", rc);
-		return;
-	}
-
-	for (i = 0; i < SRAM_DUMP_LEN; i += 4) {
-		pos -= 1;
-		str[0] = '\0';
-		fill_string(str, DEBUG_PRINT_BUFFER_SIZE, buffer + i, 4);
-		pos += sprintf((chip->debug_dump + pos), "addr:%03x:%s   ", SRAM_DUMP_START + i, str);
-	}
-
-	devm_kfree(chip->dev, buffer);
-}
-
 static void dump_sram(struct work_struct *work)
 {
 	int i, rc;
@@ -8975,8 +8908,6 @@ static int fg_probe(struct spmi_device *spmi)
 	init_completion(&chip->first_soc_done);
 	init_completion(&chip->fg_reset_done);
 	dev_set_drvdata(&spmi->dev, chip);
-	chip->debug_dump = kmalloc(sizeof(char)*2048, GFP_KERNEL);
-	memset(chip->debug_dump, '\0', sizeof(char)*2048);
 
 	spmi_for_each_container_dev(spmi_resource, spmi) {
 		if (!spmi_resource) {

@@ -1,36 +1,36 @@
 /*
-* Synaptics DSX touchscreen driver
-*
-* Copyright (C) 2012-2016 Synaptics Incorporated. All rights reserved.
-*
-* Copyright (C) 2012 Alexandra Chin <alexandra.chin@tw.synaptics.com>
-* Copyright (C) 2012 Scott Lin <scott.lin@tw.synaptics.com>
- * Copyright (C) 2018 XiaoMi, Inc.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED "AS-IS," AND SYNAPTICS
-* EXPRESSLY DISCLAIMS ALL EXPRESS AND IMPLIED WARRANTIES, INCLUDING ANY
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE,
-* AND ANY WARRANTIES OF NON-INFRINGEMENT OF ANY INTELLECTUAL PROPERTY RIGHTS.
-* IN NO EVENT SHALL SYNAPTICS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-* SPECIAL, PUNITIVE, OR CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION
-* WITH THE USE OF THE INFORMATION CONTAINED IN THIS DOCUMENT, HOWEVER CAUSED
-* AND BASED ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-* NEGLIGENCE OR OTHER TORTIOUS ACTION, AND EVEN IF SYNAPTICS WAS ADVISED OF
-* THE POSSIBILITY OF SUCH DAMAGE. IF A TRIBUNAL OF COMPETENT JURISDICTION DOES
-* NOT PERMIT THE DISCLAIMER OF DIRECT DAMAGES OR ANY OTHER DAMAGES, SYNAPTICS'
-* TOTAL CUMULATIVE LIABILITY TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S.
-* DOLLARS.
-*/
+ * Synaptics DSX touchscreen driver
+ *
+ * Copyright (C) 2012-2016 Synaptics Incorporated. All rights reserved.
+ * Copyright (C) 2019 XiaoMi, Inc.
+ *
+ * Copyright (C) 2012 Alexandra Chin <alexandra.chin@tw.synaptics.com>
+ * Copyright (C) 2012 Scott Lin <scott.lin@tw.synaptics.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED "AS-IS," AND SYNAPTICS
+ * EXPRESSLY DISCLAIMS ALL EXPRESS AND IMPLIED WARRANTIES, INCLUDING ANY
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE,
+ * AND ANY WARRANTIES OF NON-INFRINGEMENT OF ANY INTELLECTUAL PROPERTY RIGHTS.
+ * IN NO EVENT SHALL SYNAPTICS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, PUNITIVE, OR CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION
+ * WITH THE USE OF THE INFORMATION CONTAINED IN THIS DOCUMENT, HOWEVER CAUSED
+ * AND BASED ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTIOUS ACTION, AND EVEN IF SYNAPTICS WAS ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE. IF A TRIBUNAL OF COMPETENT JURISDICTION DOES
+ * NOT PERMIT THE DISCLAIMER OF DIRECT DAMAGES OR ANY OTHER DAMAGES, SYNAPTICS'
+ * TOTAL CUMULATIVE LIABILITY TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S.
+ * DOLLARS.
+ */
 
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -234,8 +234,8 @@
 #define RX_NUM_DEFAULT 32
 
 /*add by HQ-zmc 20171016*/
-static short *tddi_full_raw_limit_lower;
-static short *tddi_full_raw_limit_upper;
+static short *tddi_full_raw_limit_lower = NULL;
+static short *tddi_full_raw_limit_upper = NULL;
 /*G6.0 raw data limit*/
 static short tddi_full_raw_limit_lower_G60[TX_NUM_DEFAULT * RX_NUM_DEFAULT] = {1717	,	1634	,	1639	,	1657	,	1647	,	1632	,	1665	,	1641	,	1639	,	1664	,	1655	,	1660	,	1697	,	1662	,	1682	,	1719	,	1693	,	1711	,	1725	,	1698	,	1693	,	1719	,	1698	,	1697	,	1728	,	1704	,	1706	,	1720	,	1680	,	1688	,	1728	,	1782	,
 1637	,	1542	,	1547	,	1570	,	1557	,	1539	,	1575	,	1544	,	1542	,	1563	,	1557	,	1560	,	1599	,	1557	,	1567	,	1597	,	1573	,	1589	,	1607	,	1580	,	1567	,	1609	,	1572	,	1565	,	1598	,	1570	,	1568	,	1593	,	1552	,	1555	,	1593	,	1595	,
@@ -358,1279 +358,1279 @@ static short tddi_full_raw_limit_upper_G55[TX_NUM_DEFAULT * RX_NUM_DEFAULT] = {3
 
 #define show_prototype(propname)\
 static ssize_t concat(test_sysfs, _##propname##_show)(\
-	struct device *dev,\
-	struct device_attribute *attr,\
-	char *buf);\
+		struct device *dev,\
+		struct device_attribute *attr,\
+		char *buf);\
 \
 static struct device_attribute dev_attr_##propname =\
-	__ATTR(propname, S_IRUGO,\
-	concat(test_sysfs, _##propname##_show),\
-	synaptics_rmi4_store_error);
+		__ATTR(propname, S_IRUGO,\
+		concat(test_sysfs, _##propname##_show),\
+		synaptics_rmi4_store_error);
 
 #define store_prototype(propname)\
 static ssize_t concat(test_sysfs, _##propname##_store)(\
-	struct device *dev,\
-	struct device_attribute *attr,\
-	const char *buf, size_t count);\
+		struct device *dev,\
+		struct device_attribute *attr,\
+		const char *buf, size_t count);\
 \
 static struct device_attribute dev_attr_##propname =\
-	__ATTR(propname, (S_IWUSR | S_IWGRP),\
-	synaptics_rmi4_show_error,\
-	concat(test_sysfs, _##propname##_store));
+		__ATTR(propname, (S_IWUSR | S_IWGRP),\
+		synaptics_rmi4_show_error,\
+		concat(test_sysfs, _##propname##_store));
 
 #define show_store_prototype(propname)\
 static ssize_t concat(test_sysfs, _##propname##_show)(\
-	struct device *dev,\
-	struct device_attribute *attr,\
-	char *buf);\
+		struct device *dev,\
+		struct device_attribute *attr,\
+		char *buf);\
 \
 static ssize_t concat(test_sysfs, _##propname##_store)(\
-	struct device *dev,\
-	struct device_attribute *attr,\
-	const char *buf, size_t count);\
+		struct device *dev,\
+		struct device_attribute *attr,\
+		const char *buf, size_t count);\
 \
 static struct device_attribute dev_attr_##propname =\
-	__ATTR(propname, (S_IRUGO | S_IWUSR | S_IWGRP),\
-	concat(test_sysfs, _##propname##_show),\
-	concat(test_sysfs, _##propname##_store));
+		__ATTR(propname, (S_IRUGO | S_IWUSR | S_IWGRP),\
+		concat(test_sysfs, _##propname##_show),\
+		concat(test_sysfs, _##propname##_store));
 
 #define disable_cbc(ctrl_num)\
 do {\
-retval = synaptics_rmi4_reg_read(rmi4_data,\
-		f54->control.ctrl_num->address,\
-		f54->control.ctrl_num->data,\
-		sizeof(f54->control.ctrl_num->data));\
-if (retval < 0) {\
-	dev_err(rmi4_data->pdev->dev.parent,\
-			"%s: Failed to disable CBC (" #ctrl_num ")\n",\
-			__func__);\
-	return retval;\
-} \
-f54->control.ctrl_num->cbc_tx_carrier_selection = 0;\
-retval = synaptics_rmi4_reg_write(rmi4_data,\
-		f54->control.ctrl_num->address,\
-		f54->control.ctrl_num->data,\
-		sizeof(f54->control.ctrl_num->data));\
-if (retval < 0) {\
-	dev_err(rmi4_data->pdev->dev.parent,\
-			"%s: Failed to disable CBC (" #ctrl_num ")\n",\
-			__func__);\
-	return retval;\
-} \
+	retval = synaptics_rmi4_reg_read(rmi4_data,\
+			f54->control.ctrl_num->address,\
+			f54->control.ctrl_num->data,\
+			sizeof(f54->control.ctrl_num->data));\
+	if (retval < 0) {\
+		dev_err(rmi4_data->pdev->dev.parent,\
+				"%s: Failed to disable CBC (" #ctrl_num ")\n",\
+				__func__);\
+		return retval;\
+	} \
+	f54->control.ctrl_num->cbc_tx_carrier_selection = 0;\
+	retval = synaptics_rmi4_reg_write(rmi4_data,\
+			f54->control.ctrl_num->address,\
+			f54->control.ctrl_num->data,\
+			sizeof(f54->control.ctrl_num->data));\
+	if (retval < 0) {\
+		dev_err(rmi4_data->pdev->dev.parent,\
+				"%s: Failed to disable CBC (" #ctrl_num ")\n",\
+				__func__);\
+		return retval;\
+	} \
 } while (0)
 
 enum f54_report_types {
-F54_8BIT_IMAGE = 1,
-F54_16BIT_IMAGE = 2,
-F54_RAW_16BIT_IMAGE = 3,
-F54_HIGH_RESISTANCE = 4,
-F54_TX_TO_TX_SHORTS = 5,
-F54_RX_TO_RX_SHORTS_1 = 7,
-F54_TRUE_BASELINE = 9,
-F54_FULL_RAW_CAP_MIN_MAX = 13,
-F54_RX_OPENS_1 = 14,
-F54_TX_OPENS = 15,
-F54_TX_TO_GND_SHORTS = 16,
-F54_RX_TO_RX_SHORTS_2 = 17,
-F54_RX_OPENS_2 = 18,
-F54_FULL_RAW_CAP = 19,
-F54_FULL_RAW_CAP_NO_RX_COUPLING = 20,
-F54_SENSOR_SPEED = 22,
-F54_ADC_RANGE = 23,
-F54_TRX_OPENS = 24,
-F54_TRX_TO_GND_SHORTS = 25,
-F54_TRX_SHORTS = 26,
-F54_ABS_RAW_CAP = 38,
-F54_ABS_DELTA_CAP = 40,
-F54_ABS_HYBRID_DELTA_CAP = 59,
-F54_ABS_HYBRID_RAW_CAP = 63,
-F54_AMP_FULL_RAW_CAP = 78,
-F54_AMP_RAW_ADC = 83,
-/* tddi f54 test reporting + */
-F54_FULL_RAW_CAP_TDDI = 92,
-F54_NOISE_TDDI = 94,
-F54_EE_SHORT_TDDI = 95,
-/* tddi f54 test reporting - */
+	F54_8BIT_IMAGE = 1,
+	F54_16BIT_IMAGE = 2,
+	F54_RAW_16BIT_IMAGE = 3,
+	F54_HIGH_RESISTANCE = 4,
+	F54_TX_TO_TX_SHORTS = 5,
+	F54_RX_TO_RX_SHORTS_1 = 7,
+	F54_TRUE_BASELINE = 9,
+	F54_FULL_RAW_CAP_MIN_MAX = 13,
+	F54_RX_OPENS_1 = 14,
+	F54_TX_OPENS = 15,
+	F54_TX_TO_GND_SHORTS = 16,
+	F54_RX_TO_RX_SHORTS_2 = 17,
+	F54_RX_OPENS_2 = 18,
+	F54_FULL_RAW_CAP = 19,
+	F54_FULL_RAW_CAP_NO_RX_COUPLING = 20,
+	F54_SENSOR_SPEED = 22,
+	F54_ADC_RANGE = 23,
+	F54_TRX_OPENS = 24,
+	F54_TRX_TO_GND_SHORTS = 25,
+	F54_TRX_SHORTS = 26,
+	F54_ABS_RAW_CAP = 38,
+	F54_ABS_DELTA_CAP = 40,
+	F54_ABS_HYBRID_DELTA_CAP = 59,
+	F54_ABS_HYBRID_RAW_CAP = 63,
+	F54_AMP_FULL_RAW_CAP = 78,
+	F54_AMP_RAW_ADC = 83,
+	/* tddi f54 test reporting + */
+	F54_FULL_RAW_CAP_TDDI = 92,
+	F54_NOISE_TDDI = 94,
+	F54_EE_SHORT_TDDI = 95,
+	/* tddi f54 test reporting - */
 
-INVALID_REPORT_TYPE = -1,
+	INVALID_REPORT_TYPE = -1,
 };
 
 enum f54_afe_cal {
-F54_AFE_CAL,
-F54_AFE_IS_CAL,
+	F54_AFE_CAL,
+	F54_AFE_IS_CAL,
 };
 
 struct f54_query {
-union {
-	struct {
-		/* query 0 */
-		unsigned char num_of_rx_electrodes;
+	union {
+		struct {
+			/* query 0 */
+			unsigned char num_of_rx_electrodes;
 
-		/* query 1 */
-		unsigned char num_of_tx_electrodes;
+			/* query 1 */
+			unsigned char num_of_tx_electrodes;
 
-		/* query 2 */
-		unsigned char f54_query2_b0__1:2;
-		unsigned char has_baseline:1;
-		unsigned char has_image8:1;
-		unsigned char f54_query2_b4__5:2;
-		unsigned char has_image16:1;
-		unsigned char f54_query2_b7:1;
+			/* query 2 */
+			unsigned char f54_query2_b0__1:2;
+			unsigned char has_baseline:1;
+			unsigned char has_image8:1;
+			unsigned char f54_query2_b4__5:2;
+			unsigned char has_image16:1;
+			unsigned char f54_query2_b7:1;
 
-		/* queries 3.0 and 3.1 */
-		unsigned short clock_rate;
+			/* queries 3.0 and 3.1 */
+			unsigned short clock_rate;
 
-		/* query 4 */
-		unsigned char touch_controller_family;
+			/* query 4 */
+			unsigned char touch_controller_family;
 
-		/* query 5 */
-		unsigned char has_pixel_touch_threshold_adjustment:1;
-		unsigned char f54_query5_b1__7:7;
+			/* query 5 */
+			unsigned char has_pixel_touch_threshold_adjustment:1;
+			unsigned char f54_query5_b1__7:7;
 
-		/* query 6 */
-		unsigned char has_sensor_assignment:1;
-		unsigned char has_interference_metric:1;
-		unsigned char has_sense_frequency_control:1;
-		unsigned char has_firmware_noise_mitigation:1;
-		unsigned char has_ctrl11:1;
-		unsigned char has_two_byte_report_rate:1;
-		unsigned char has_one_byte_report_rate:1;
-		unsigned char has_relaxation_control:1;
+			/* query 6 */
+			unsigned char has_sensor_assignment:1;
+			unsigned char has_interference_metric:1;
+			unsigned char has_sense_frequency_control:1;
+			unsigned char has_firmware_noise_mitigation:1;
+			unsigned char has_ctrl11:1;
+			unsigned char has_two_byte_report_rate:1;
+			unsigned char has_one_byte_report_rate:1;
+			unsigned char has_relaxation_control:1;
 
-		/* query 7 */
-		unsigned char curve_compensation_mode:2;
-		unsigned char f54_query7_b2__7:6;
+			/* query 7 */
+			unsigned char curve_compensation_mode:2;
+			unsigned char f54_query7_b2__7:6;
 
-		/* query 8 */
-		unsigned char f54_query8_b0:1;
-		unsigned char has_iir_filter:1;
-		unsigned char has_cmn_removal:1;
-		unsigned char has_cmn_maximum:1;
-		unsigned char has_touch_hysteresis:1;
-		unsigned char has_edge_compensation:1;
-		unsigned char has_per_frequency_noise_control:1;
-		unsigned char has_enhanced_stretch:1;
+			/* query 8 */
+			unsigned char f54_query8_b0:1;
+			unsigned char has_iir_filter:1;
+			unsigned char has_cmn_removal:1;
+			unsigned char has_cmn_maximum:1;
+			unsigned char has_touch_hysteresis:1;
+			unsigned char has_edge_compensation:1;
+			unsigned char has_per_frequency_noise_control:1;
+			unsigned char has_enhanced_stretch:1;
 
-		/* query 9 */
-		unsigned char has_force_fast_relaxation:1;
-		unsigned char has_multi_metric_state_machine:1;
-		unsigned char has_signal_clarity:1;
-		unsigned char has_variance_metric:1;
-		unsigned char has_0d_relaxation_control:1;
-		unsigned char has_0d_acquisition_control:1;
-		unsigned char has_status:1;
-		unsigned char has_slew_metric:1;
+			/* query 9 */
+			unsigned char has_force_fast_relaxation:1;
+			unsigned char has_multi_metric_state_machine:1;
+			unsigned char has_signal_clarity:1;
+			unsigned char has_variance_metric:1;
+			unsigned char has_0d_relaxation_control:1;
+			unsigned char has_0d_acquisition_control:1;
+			unsigned char has_status:1;
+			unsigned char has_slew_metric:1;
 
-		/* query 10 */
-		unsigned char has_h_blank:1;
-		unsigned char has_v_blank:1;
-		unsigned char has_long_h_blank:1;
-		unsigned char has_startup_fast_relaxation:1;
-		unsigned char has_esd_control:1;
-		unsigned char has_noise_mitigation2:1;
-		unsigned char has_noise_state:1;
-		unsigned char has_energy_ratio_relaxation:1;
+			/* query 10 */
+			unsigned char has_h_blank:1;
+			unsigned char has_v_blank:1;
+			unsigned char has_long_h_blank:1;
+			unsigned char has_startup_fast_relaxation:1;
+			unsigned char has_esd_control:1;
+			unsigned char has_noise_mitigation2:1;
+			unsigned char has_noise_state:1;
+			unsigned char has_energy_ratio_relaxation:1;
 
-		/* query 11 */
-		unsigned char has_excessive_noise_reporting:1;
-		unsigned char has_slew_option:1;
-		unsigned char has_two_overhead_bursts:1;
-		unsigned char has_query13:1;
-		unsigned char has_one_overhead_burst:1;
-		unsigned char f54_query11_b5:1;
-		unsigned char has_ctrl88:1;
-		unsigned char has_query15:1;
+			/* query 11 */
+			unsigned char has_excessive_noise_reporting:1;
+			unsigned char has_slew_option:1;
+			unsigned char has_two_overhead_bursts:1;
+			unsigned char has_query13:1;
+			unsigned char has_one_overhead_burst:1;
+			unsigned char f54_query11_b5:1;
+			unsigned char has_ctrl88:1;
+			unsigned char has_query15:1;
 
-		/* query 12 */
-		unsigned char number_of_sensing_frequencies:4;
-		unsigned char f54_query12_b4__7:4;
-	} __packed;
-	unsigned char data[14];
-};
+			/* query 12 */
+			unsigned char number_of_sensing_frequencies:4;
+			unsigned char f54_query12_b4__7:4;
+		} __packed;
+		unsigned char data[14];
+	};
 };
 
 struct f54_query_13 {
-union {
-	struct {
-		unsigned char has_ctrl86:1;
-		unsigned char has_ctrl87:1;
-		unsigned char has_ctrl87_sub0:1;
-		unsigned char has_ctrl87_sub1:1;
-		unsigned char has_ctrl87_sub2:1;
-		unsigned char has_cidim:1;
-		unsigned char has_noise_mitigation_enhancement:1;
-		unsigned char has_rail_im:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl86:1;
+			unsigned char has_ctrl87:1;
+			unsigned char has_ctrl87_sub0:1;
+			unsigned char has_ctrl87_sub1:1;
+			unsigned char has_ctrl87_sub2:1;
+			unsigned char has_cidim:1;
+			unsigned char has_noise_mitigation_enhancement:1;
+			unsigned char has_rail_im:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_15 {
-union {
-	struct {
-		unsigned char has_ctrl90:1;
-		unsigned char has_transmit_strength:1;
-		unsigned char has_ctrl87_sub3:1;
-		unsigned char has_query16:1;
-		unsigned char has_query20:1;
-		unsigned char has_query21:1;
-		unsigned char has_query22:1;
-		unsigned char has_query25:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl90:1;
+			unsigned char has_transmit_strength:1;
+			unsigned char has_ctrl87_sub3:1;
+			unsigned char has_query16:1;
+			unsigned char has_query20:1;
+			unsigned char has_query21:1;
+			unsigned char has_query22:1;
+			unsigned char has_query25:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_16 {
-union {
-	struct {
-		unsigned char has_query17:1;
-		unsigned char has_data17:1;
-		unsigned char has_ctrl92:1;
-		unsigned char has_ctrl93:1;
-		unsigned char has_ctrl94_query18:1;
-		unsigned char has_ctrl95_query19:1;
-		unsigned char has_ctrl99:1;
-		unsigned char has_ctrl100:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_query17:1;
+			unsigned char has_data17:1;
+			unsigned char has_ctrl92:1;
+			unsigned char has_ctrl93:1;
+			unsigned char has_ctrl94_query18:1;
+			unsigned char has_ctrl95_query19:1;
+			unsigned char has_ctrl99:1;
+			unsigned char has_ctrl100:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_21 {
-union {
-	struct {
-		unsigned char has_abs_rx:1;
-		unsigned char has_abs_tx:1;
-		unsigned char has_ctrl91:1;
-		unsigned char has_ctrl96:1;
-		unsigned char has_ctrl97:1;
-		unsigned char has_ctrl98:1;
-		unsigned char has_data19:1;
-		unsigned char has_query24_data18:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_abs_rx:1;
+			unsigned char has_abs_tx:1;
+			unsigned char has_ctrl91:1;
+			unsigned char has_ctrl96:1;
+			unsigned char has_ctrl97:1;
+			unsigned char has_ctrl98:1;
+			unsigned char has_data19:1;
+			unsigned char has_query24_data18:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_22 {
-union {
-	struct {
-		unsigned char has_packed_image:1;
-		unsigned char has_ctrl101:1;
-		unsigned char has_dynamic_sense_display_ratio:1;
-		unsigned char has_query23:1;
-		unsigned char has_ctrl103_query26:1;
-		unsigned char has_ctrl104:1;
-		unsigned char has_ctrl105:1;
-		unsigned char has_query28:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_packed_image:1;
+			unsigned char has_ctrl101:1;
+			unsigned char has_dynamic_sense_display_ratio:1;
+			unsigned char has_query23:1;
+			unsigned char has_ctrl103_query26:1;
+			unsigned char has_ctrl104:1;
+			unsigned char has_ctrl105:1;
+			unsigned char has_query28:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_23 {
-union {
-	struct {
-		unsigned char has_ctrl102:1;
-		unsigned char has_ctrl102_sub1:1;
-		unsigned char has_ctrl102_sub2:1;
-		unsigned char has_ctrl102_sub4:1;
-		unsigned char has_ctrl102_sub5:1;
-		unsigned char has_ctrl102_sub9:1;
-		unsigned char has_ctrl102_sub10:1;
-		unsigned char has_ctrl102_sub11:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl102:1;
+			unsigned char has_ctrl102_sub1:1;
+			unsigned char has_ctrl102_sub2:1;
+			unsigned char has_ctrl102_sub4:1;
+			unsigned char has_ctrl102_sub5:1;
+			unsigned char has_ctrl102_sub9:1;
+			unsigned char has_ctrl102_sub10:1;
+			unsigned char has_ctrl102_sub11:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_25 {
-union {
-	struct {
-		unsigned char has_ctrl106:1;
-		unsigned char has_ctrl102_sub12:1;
-		unsigned char has_ctrl107:1;
-		unsigned char has_ctrl108:1;
-		unsigned char has_ctrl109:1;
-		unsigned char has_data20:1;
-		unsigned char f54_query25_b6:1;
-		unsigned char has_query27:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl106:1;
+			unsigned char has_ctrl102_sub12:1;
+			unsigned char has_ctrl107:1;
+			unsigned char has_ctrl108:1;
+			unsigned char has_ctrl109:1;
+			unsigned char has_data20:1;
+			unsigned char f54_query25_b6:1;
+			unsigned char has_query27:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_27 {
-union {
-	struct {
-		unsigned char has_ctrl110:1;
-		unsigned char has_data21:1;
-		unsigned char has_ctrl111:1;
-		unsigned char has_ctrl112:1;
-		unsigned char has_ctrl113:1;
-		unsigned char has_data22:1;
-		unsigned char has_ctrl114:1;
-		unsigned char has_query29:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl110:1;
+			unsigned char has_data21:1;
+			unsigned char has_ctrl111:1;
+			unsigned char has_ctrl112:1;
+			unsigned char has_ctrl113:1;
+			unsigned char has_data22:1;
+			unsigned char has_ctrl114:1;
+			unsigned char has_query29:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_29 {
-union {
-	struct {
-		unsigned char has_ctrl115:1;
-		unsigned char has_ground_ring_options:1;
-		unsigned char has_lost_bursts_tuning:1;
-		unsigned char has_aux_exvcom2_select:1;
-		unsigned char has_ctrl116:1;
-		unsigned char has_data23:1;
-		unsigned char has_ctrl117:1;
-		unsigned char has_query30:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl115:1;
+			unsigned char has_ground_ring_options:1;
+			unsigned char has_lost_bursts_tuning:1;
+			unsigned char has_aux_exvcom2_select:1;
+			unsigned char has_ctrl116:1;
+			unsigned char has_data23:1;
+			unsigned char has_ctrl117:1;
+			unsigned char has_query30:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_30 {
-union {
-	struct {
-		unsigned char has_ctrl118:1;
-		unsigned char has_ctrl119:1;
-		unsigned char has_ctrl120:1;
-		unsigned char has_ctrl121:1;
-		unsigned char has_ctrl122_query31:1;
-		unsigned char has_ctrl123:1;
-		unsigned char has_ctrl124:1;
-		unsigned char has_query32:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl118:1;
+			unsigned char has_ctrl119:1;
+			unsigned char has_ctrl120:1;
+			unsigned char has_ctrl121:1;
+			unsigned char has_ctrl122_query31:1;
+			unsigned char has_ctrl123:1;
+			unsigned char has_ctrl124:1;
+			unsigned char has_query32:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_32 {
-union {
-	struct {
-		unsigned char has_ctrl125:1;
-		unsigned char has_ctrl126:1;
-		unsigned char has_ctrl127:1;
-		unsigned char has_abs_charge_pump_disable:1;
-		unsigned char has_query33:1;
-		unsigned char has_data24:1;
-		unsigned char has_query34:1;
-		unsigned char has_query35:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl125:1;
+			unsigned char has_ctrl126:1;
+			unsigned char has_ctrl127:1;
+			unsigned char has_abs_charge_pump_disable:1;
+			unsigned char has_query33:1;
+			unsigned char has_data24:1;
+			unsigned char has_query34:1;
+			unsigned char has_query35:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_33 {
-union {
-	struct {
-		unsigned char has_ctrl128:1;
-		unsigned char has_ctrl129:1;
-		unsigned char has_ctrl130:1;
-		unsigned char has_ctrl131:1;
-		unsigned char has_ctrl132:1;
-		unsigned char has_ctrl133:1;
-		unsigned char has_ctrl134:1;
-		unsigned char has_query36:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl128:1;
+			unsigned char has_ctrl129:1;
+			unsigned char has_ctrl130:1;
+			unsigned char has_ctrl131:1;
+			unsigned char has_ctrl132:1;
+			unsigned char has_ctrl133:1;
+			unsigned char has_ctrl134:1;
+			unsigned char has_query36:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_35 {
-union {
-	struct {
-		unsigned char has_data25:1;
-		unsigned char has_ctrl135:1;
-		unsigned char has_ctrl136:1;
-		unsigned char has_ctrl137:1;
-		unsigned char has_ctrl138:1;
-		unsigned char has_ctrl139:1;
-		unsigned char has_data26:1;
-		unsigned char has_ctrl140:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_data25:1;
+			unsigned char has_ctrl135:1;
+			unsigned char has_ctrl136:1;
+			unsigned char has_ctrl137:1;
+			unsigned char has_ctrl138:1;
+			unsigned char has_ctrl139:1;
+			unsigned char has_data26:1;
+			unsigned char has_ctrl140:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_36 {
-union {
-	struct {
-		unsigned char has_ctrl141:1;
-		unsigned char has_ctrl142:1;
-		unsigned char has_query37:1;
-		unsigned char has_ctrl143:1;
-		unsigned char has_ctrl144:1;
-		unsigned char has_ctrl145:1;
-		unsigned char has_ctrl146:1;
-		unsigned char has_query38:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl141:1;
+			unsigned char has_ctrl142:1;
+			unsigned char has_query37:1;
+			unsigned char has_ctrl143:1;
+			unsigned char has_ctrl144:1;
+			unsigned char has_ctrl145:1;
+			unsigned char has_ctrl146:1;
+			unsigned char has_query38:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_38 {
-union {
-	struct {
-		unsigned char has_ctrl147:1;
-		unsigned char has_ctrl148:1;
-		unsigned char has_ctrl149:1;
-		unsigned char has_ctrl150:1;
-		unsigned char has_ctrl151:1;
-		unsigned char has_ctrl152:1;
-		unsigned char has_ctrl153:1;
-		unsigned char has_query39:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl147:1;
+			unsigned char has_ctrl148:1;
+			unsigned char has_ctrl149:1;
+			unsigned char has_ctrl150:1;
+			unsigned char has_ctrl151:1;
+			unsigned char has_ctrl152:1;
+			unsigned char has_ctrl153:1;
+			unsigned char has_query39:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_39 {
-union {
-	struct {
-		unsigned char has_ctrl154:1;
-		unsigned char has_ctrl155:1;
-		unsigned char has_ctrl156:1;
-		unsigned char has_ctrl160:1;
-		unsigned char has_ctrl157_ctrl158:1;
-		unsigned char f54_query39_b5__6:2;
-		unsigned char has_query40:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl154:1;
+			unsigned char has_ctrl155:1;
+			unsigned char has_ctrl156:1;
+			unsigned char has_ctrl160:1;
+			unsigned char has_ctrl157_ctrl158:1;
+			unsigned char f54_query39_b5__6:2;
+			unsigned char has_query40:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_40 {
-union {
-	struct {
-		unsigned char has_ctrl169:1;
-		unsigned char has_ctrl163_query41:1;
-		unsigned char f54_query40_b2:1;
-		unsigned char has_ctrl165_query42:1;
-		unsigned char has_ctrl166:1;
-		unsigned char has_ctrl167:1;
-		unsigned char has_ctrl168:1;
-		unsigned char has_query43:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl169:1;
+			unsigned char has_ctrl163_query41:1;
+			unsigned char f54_query40_b2:1;
+			unsigned char has_ctrl165_query42:1;
+			unsigned char has_ctrl166:1;
+			unsigned char has_ctrl167:1;
+			unsigned char has_ctrl168:1;
+			unsigned char has_query43:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_43 {
-union {
-	struct {
-		unsigned char f54_query43_b0__1:2;
-		unsigned char has_ctrl171:1;
-		unsigned char has_ctrl172_query44_query45:1;
-		unsigned char has_ctrl173:1;
-		unsigned char has_ctrl174:1;
-		unsigned char has_ctrl175:1;
-		unsigned char has_query46:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f54_query43_b0__1:2;
+			unsigned char has_ctrl171:1;
+			unsigned char has_ctrl172_query44_query45:1;
+			unsigned char has_ctrl173:1;
+			unsigned char has_ctrl174:1;
+			unsigned char has_ctrl175:1;
+			unsigned char has_query46:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_46 {
-union {
-	struct {
-		unsigned char has_ctrl176:1;
-		unsigned char has_ctrl177_ctrl178:1;
-		unsigned char has_ctrl179:1;
-		unsigned char f54_query46_b3:1;
-		unsigned char has_data27:1;
-		unsigned char has_data28:1;
-		unsigned char f54_query46_b6:1;
-		unsigned char has_query47:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl176:1;
+			unsigned char has_ctrl177_ctrl178:1;
+			unsigned char has_ctrl179:1;
+			unsigned char f54_query46_b3:1;
+			unsigned char has_data27:1;
+			unsigned char has_data28:1;
+			unsigned char f54_query46_b6:1;
+			unsigned char has_query47:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_47 {
-union {
-	struct {
-		unsigned char f54_query47_b0:1;
-		unsigned char has_ctrl182:1;
-		unsigned char has_ctrl183:1;
-		unsigned char f54_query47_b3:1;
-		unsigned char has_ctrl185:1;
-		unsigned char has_ctrl186:1;
-		unsigned char has_ctrl187:1;
-		unsigned char has_query49:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f54_query47_b0:1;
+			unsigned char has_ctrl182:1;
+			unsigned char has_ctrl183:1;
+			unsigned char f54_query47_b3:1;
+			unsigned char has_ctrl185:1;
+			unsigned char has_ctrl186:1;
+			unsigned char has_ctrl187:1;
+			unsigned char has_query49:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_49 {
-union {
-	struct {
-		unsigned char f54_query49_b0__1:2;
-		unsigned char has_ctrl188:1;
-		unsigned char has_data31:1;
-		unsigned char f54_query49_b4__6:3;
-		unsigned char has_query50:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f54_query49_b0__1:2;
+			unsigned char has_ctrl188:1;
+			unsigned char has_data31:1;
+			unsigned char f54_query49_b4__6:3;
+			unsigned char has_query50:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_50 {
-union {
-	struct {
-		unsigned char f54_query50_b0__6:7;
-		unsigned char has_query51:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f54_query50_b0__6:7;
+			unsigned char has_query51:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 /* tddi f54 test reporting + */
 struct f54_query_51 {
-union {
-	struct {
-		unsigned char f54_query51_b0:1;
-		unsigned char has_ctrl196:1;
-		unsigned char f54_query51_b2:1;
-		unsigned char f54_query51_b3:1;
-		unsigned char f54_query51_b4:1;
-		unsigned char has_query53_query54_ctrl198:1;
-		unsigned char has_ctrl199:1;
-		unsigned char has_query55:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f54_query51_b0:1;
+			unsigned char has_ctrl196:1;
+			unsigned char f54_query51_b2:1;
+			unsigned char f54_query51_b3:1;
+			unsigned char f54_query51_b4:1;
+			unsigned char has_query53_query54_ctrl198:1;
+			unsigned char has_ctrl199:1;
+			unsigned char has_query55:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_55 {
-union {
-	struct {
-		unsigned char has_query56:1;
-		unsigned char has_data33_data34:1;
-		unsigned char has_alternate_report_rate:1;
-		unsigned char has_ctrl200:1;
-		unsigned char has_ctrl201_ctrl202:1;
-		unsigned char has_ctrl203:1;
-		unsigned char has_ctrl204:1;
-		unsigned char has_query57:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_query56:1;
+			unsigned char has_data33_data34:1;
+			unsigned char has_alternate_report_rate:1;
+			unsigned char has_ctrl200:1;
+			unsigned char has_ctrl201_ctrl202:1;
+			unsigned char has_ctrl203:1;
+			unsigned char has_ctrl204:1;
+			unsigned char has_query57:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_57 {
-union {
-	struct {
-		unsigned char has_ctrl205:1;
-		unsigned char has_ctrl206:1;
-		unsigned char has_usb_bulk_read:1;
-		unsigned char has_ctrl207:1;
-		unsigned char has_ctrl208:1;
-		unsigned char has_ctrl209:1;
-		unsigned char has_ctrl210:1;
-		unsigned char has_query58:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl205:1;
+			unsigned char has_ctrl206:1;
+			unsigned char has_usb_bulk_read:1;
+			unsigned char has_ctrl207:1;
+			unsigned char has_ctrl208:1;
+			unsigned char has_ctrl209:1;
+			unsigned char has_ctrl210:1;
+			unsigned char has_query58:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_58 {
-union {
-	struct {
-		unsigned char has_query59:1;
-		unsigned char has_query60:1;
-		unsigned char has_ctrl211:1;
-		unsigned char has_ctrl212:1;
-		unsigned char has_hybrid_abs_tx_axis_filtering:1;
-		unsigned char f54_query58_b5:1;
-		unsigned char has_ctrl213:1;
-		unsigned char has_query61:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_query59:1;
+			unsigned char has_query60:1;
+			unsigned char has_ctrl211:1;
+			unsigned char has_ctrl212:1;
+			unsigned char has_hybrid_abs_tx_axis_filtering:1;
+			unsigned char f54_query58_b5:1;
+			unsigned char has_ctrl213:1;
+			unsigned char has_query61:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_61 {
-union {
-	struct {
-		unsigned char has_ctrl214:1;
-		unsigned char has_ctrl215_query62_query63:1;
-		unsigned char f54_query61_b2__4:3;
-		unsigned char has_ctrl218:1;
-		unsigned char has_hybrid_abs_buttons:1;
-		unsigned char has_query64:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl214:1;
+			unsigned char has_ctrl215_query62_query63:1;
+			unsigned char f54_query61_b2__4:3;
+			unsigned char has_ctrl218:1;
+			unsigned char has_hybrid_abs_buttons:1;
+			unsigned char has_query64:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_64 {
-union {
-	struct {
-		unsigned char f54_query64_b0:1;
-		unsigned char has_ctrl220:1;
-		unsigned char f54_query64_b2__3:2;
-		unsigned char has_ctrl219_sub1:1;
-		unsigned char has_ctrl103_sub3:1;
-		unsigned char has_ctrl224_ctrl226_ctrl227:1;
-		unsigned char has_query65:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f54_query64_b0:1;
+			unsigned char has_ctrl220:1;
+			unsigned char f54_query64_b2__3:2;
+			unsigned char has_ctrl219_sub1:1;
+			unsigned char has_ctrl103_sub3:1;
+			unsigned char has_ctrl224_ctrl226_ctrl227:1;
+			unsigned char has_query65:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_65 {
-union {
-	struct {
-		unsigned char f54_query65_b0__4:5;
-		unsigned char has_query66_ctrl231:1;
-		unsigned char has_ctrl232:1;
-		unsigned char has_query67:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f54_query65_b0__4:5;
+			unsigned char has_query66_ctrl231:1;
+			unsigned char has_ctrl232:1;
+			unsigned char has_query67:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_67 {
-union {
-	struct {
-		unsigned char has_abs_doze_spatial_filter_enable:1;
-		unsigned char has_abs_doze_average_filter_enable:1;
-		unsigned char has_single_display_pulse:1;
-		unsigned char f54_query67_b3__6:4;
-		unsigned char has_query68:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_abs_doze_spatial_filter_enable:1;
+			unsigned char has_abs_doze_average_filter_enable:1;
+			unsigned char has_single_display_pulse:1;
+			unsigned char f54_query67_b3__6:4;
+			unsigned char has_query68:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_68 {
-union {
-	struct {
-		unsigned char f54_query68_b0__4:5;
-		unsigned char has_freq_filter_bw_ext:1;
-		unsigned char f54_query68_b6:1;
-		unsigned char has_query69:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f54_query68_b0__4:5;
+			unsigned char has_freq_filter_bw_ext:1;
+			unsigned char f54_query68_b6:1;
+			unsigned char has_query69:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f54_query_69 {
-union {
-	struct {
-		unsigned char has_ctrl240_sub0:1;
-		unsigned char has_ctrl240_sub1_sub2:1;
-		unsigned char has_ctrl240_sub3:1;
-		unsigned char has_ctrl240_sub4:1;
-		unsigned char burst_mode_report_type_enabled:1;
-		unsigned char f54_query69_b5__7:3;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl240_sub0:1;
+			unsigned char has_ctrl240_sub1_sub2:1;
+			unsigned char has_ctrl240_sub3:1;
+			unsigned char has_ctrl240_sub4:1;
+			unsigned char burst_mode_report_type_enabled:1;
+			unsigned char f54_query69_b5__7:3;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 /* tddi f54 test reporting - */
 
 struct f54_data_31 {
-union {
-	struct {
-		unsigned char is_calibration_crc:1;
-		unsigned char calibration_crc:1;
-		unsigned char short_test_row_number:5;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char is_calibration_crc:1;
+			unsigned char calibration_crc:1;
+			unsigned char short_test_row_number:5;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_7 {
-union {
-	struct {
-		unsigned char cbc_cap:3;
-		unsigned char cbc_polarity:1;
-		unsigned char cbc_tx_carrier_selection:1;
-		unsigned char f54_ctrl7_b5__7:3;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char cbc_cap:3;
+			unsigned char cbc_polarity:1;
+			unsigned char cbc_tx_carrier_selection:1;
+			unsigned char f54_ctrl7_b5__7:3;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_41 {
-union {
-	struct {
-		unsigned char no_signal_clarity:1;
-		unsigned char f54_ctrl41_b1__7:7;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char no_signal_clarity:1;
+			unsigned char f54_ctrl41_b1__7:7;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_57 {
-union {
-	struct {
-		unsigned char cbc_cap:3;
-		unsigned char cbc_polarity:1;
-		unsigned char cbc_tx_carrier_selection:1;
-		unsigned char f54_ctrl57_b5__7:3;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char cbc_cap:3;
+			unsigned char cbc_polarity:1;
+			unsigned char cbc_tx_carrier_selection:1;
+			unsigned char f54_ctrl57_b5__7:3;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_86 {
-union {
-	struct {
-		unsigned char enable_high_noise_state:1;
-		unsigned char dynamic_sense_display_ratio:2;
-		unsigned char f54_ctrl86_b3__7:5;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char enable_high_noise_state:1;
+			unsigned char dynamic_sense_display_ratio:2;
+			unsigned char f54_ctrl86_b3__7:5;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_88 {
-union {
-	struct {
-		unsigned char tx_low_reference_polarity:1;
-		unsigned char tx_high_reference_polarity:1;
-		unsigned char abs_low_reference_polarity:1;
-		unsigned char abs_polarity:1;
-		unsigned char cbc_polarity:1;
-		unsigned char cbc_tx_carrier_selection:1;
-		unsigned char charge_pump_enable:1;
-		unsigned char cbc_abs_auto_servo:1;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char tx_low_reference_polarity:1;
+			unsigned char tx_high_reference_polarity:1;
+			unsigned char abs_low_reference_polarity:1;
+			unsigned char abs_polarity:1;
+			unsigned char cbc_polarity:1;
+			unsigned char cbc_tx_carrier_selection:1;
+			unsigned char charge_pump_enable:1;
+			unsigned char cbc_abs_auto_servo:1;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 /* tddi f54 test reporting + */
 struct f54_control_91 {
-union {
-	struct {
-		unsigned char reflo_transcap_capacitance;
-		unsigned char refhi_transcap_capacitance;
-		unsigned char receiver_feedback_capacitance;
-		unsigned char reference_receiver_feedback_capacitance;
-		unsigned char gain_ctrl;
-	} __packed;
-	struct {
-		unsigned char data[5];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char reflo_transcap_capacitance;
+			unsigned char refhi_transcap_capacitance;
+			unsigned char receiver_feedback_capacitance;
+			unsigned char reference_receiver_feedback_capacitance;
+			unsigned char gain_ctrl;
+		} __packed;
+		struct {
+			unsigned char data[5];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_96 {
-union {
-	struct {
-		unsigned char cbc_transcap[64];
-	} __packed;
-	struct {
-		unsigned char data[64];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char cbc_transcap[64];
+		} __packed;
+		struct {
+			unsigned char data[64];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_99 {
-union {
-	struct {
-		unsigned char integration_duration_lsb;
-		unsigned char integration_duration_msb;
-		unsigned char reset_duration;
-	} __packed;
-	struct {
-		unsigned char data[3];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char integration_duration_lsb;
+			unsigned char integration_duration_msb;
+			unsigned char reset_duration;
+		} __packed;
+		struct {
+			unsigned char data[3];
+			unsigned short address;
+		} __packed;
+	};
 };
 /* tddi f54 test reporting - */
 
 struct f54_control_110 {
-union {
-	struct {
-		unsigned char active_stylus_rx_feedback_cap;
-		unsigned char active_stylus_rx_feedback_cap_reference;
-		unsigned char active_stylus_low_reference;
-		unsigned char active_stylus_high_reference;
-		unsigned char active_stylus_gain_control;
-		unsigned char active_stylus_gain_control_reference;
-		unsigned char active_stylus_timing_mode;
-		unsigned char active_stylus_discovery_bursts;
-		unsigned char active_stylus_detection_bursts;
-		unsigned char active_stylus_discovery_noise_multiplier;
-		unsigned char active_stylus_detection_envelope_min;
-		unsigned char active_stylus_detection_envelope_max;
-		unsigned char active_stylus_lose_count;
-	} __packed;
-	struct {
-		unsigned char data[13];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char active_stylus_rx_feedback_cap;
+			unsigned char active_stylus_rx_feedback_cap_reference;
+			unsigned char active_stylus_low_reference;
+			unsigned char active_stylus_high_reference;
+			unsigned char active_stylus_gain_control;
+			unsigned char active_stylus_gain_control_reference;
+			unsigned char active_stylus_timing_mode;
+			unsigned char active_stylus_discovery_bursts;
+			unsigned char active_stylus_detection_bursts;
+			unsigned char active_stylus_discovery_noise_multiplier;
+			unsigned char active_stylus_detection_envelope_min;
+			unsigned char active_stylus_detection_envelope_max;
+			unsigned char active_stylus_lose_count;
+		} __packed;
+		struct {
+			unsigned char data[13];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_149 {
-union {
-	struct {
-		unsigned char trans_cbc_global_cap_enable:1;
-		unsigned char f54_ctrl149_b1__7:7;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char trans_cbc_global_cap_enable:1;
+			unsigned char f54_ctrl149_b1__7:7;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_182 {
-union {
-	struct {
-		unsigned char cbc_timing_ctrl_tx_lsb;
-		unsigned char cbc_timing_ctrl_tx_msb;
-		unsigned char cbc_timing_ctrl_rx_lsb;
-		unsigned char cbc_timing_ctrl_rx_msb;
-	} __packed;
-	struct {
-		unsigned char data[4];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char cbc_timing_ctrl_tx_lsb;
+			unsigned char cbc_timing_ctrl_tx_msb;
+			unsigned char cbc_timing_ctrl_rx_lsb;
+			unsigned char cbc_timing_ctrl_rx_msb;
+		} __packed;
+		struct {
+			unsigned char data[4];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_188 {
-union {
-	struct {
-		unsigned char start_calibration:1;
-		unsigned char start_is_calibration:1;
-		unsigned char frequency:2;
-		unsigned char start_production_test:1;
-		unsigned char short_test_calibration:1;
-		unsigned char f54_ctrl188_b7:1;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char start_calibration:1;
+			unsigned char start_is_calibration:1;
+			unsigned char frequency:2;
+			unsigned char start_production_test:1;
+			unsigned char short_test_calibration:1;
+			unsigned char f54_ctrl188_b7:1;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control_223 {
-union {
-	struct {
-		unsigned char voltages_for_0d:8;
-	} __packed;
-	struct {
-		unsigned char data[1];
-		unsigned short address;
-	} __packed;
-};
+	union {
+		struct {
+			unsigned char voltages_for_0d:8;
+		} __packed;
+		struct {
+			unsigned char data[1];
+			unsigned short address;
+		} __packed;
+	};
 };
 
 struct f54_control {
-struct f54_control_7 *reg_7;
-struct f54_control_41 *reg_41;
-struct f54_control_57 *reg_57;
-struct f54_control_86 *reg_86;
-struct f54_control_88 *reg_88;
-struct f54_control_91 *reg_91;
-struct f54_control_96 *reg_96;
-struct f54_control_99 *reg_99;
-struct f54_control_110 *reg_110;
-struct f54_control_149 *reg_149;
-struct f54_control_182 *reg_182;
-struct f54_control_188 *reg_188;
-struct f54_control_223 *reg_223;
+	struct f54_control_7 *reg_7;
+	struct f54_control_41 *reg_41;
+	struct f54_control_57 *reg_57;
+	struct f54_control_86 *reg_86;
+	struct f54_control_88 *reg_88;
+	struct f54_control_91 *reg_91;
+	struct f54_control_96 *reg_96;
+	struct f54_control_99 *reg_99;
+	struct f54_control_110 *reg_110;
+	struct f54_control_149 *reg_149;
+	struct f54_control_182 *reg_182;
+	struct f54_control_188 *reg_188;
+	struct f54_control_223 *reg_223;
 };
 
 struct synaptics_rmi4_f54_handle {
-bool is_burst;
-bool no_auto_cal;
-bool skip_preparation;
-bool burst_read;
-unsigned char status;
-unsigned char intr_mask;
-unsigned char intr_reg_num;
-unsigned char tx_assigned;
-unsigned char rx_assigned;
-/* tddi f54 test reporting + */
-unsigned char swap_sensor_side;
-unsigned char left_mux_size;
-unsigned char right_mux_size;
-/*tddi f54 test reporting - */
-unsigned char *report_data;
-unsigned short query_base_addr;
-unsigned short control_base_addr;
-unsigned short data_base_addr;
-unsigned short command_base_addr;
-unsigned short fifoindex;
-unsigned int report_size;
-unsigned int data_buffer_size;
-unsigned int data_pos;
-enum f54_report_types report_type;
-struct f54_query query;
-struct f54_query_13 query_13;
-struct f54_query_15 query_15;
-struct f54_query_16 query_16;
-struct f54_query_21 query_21;
-struct f54_query_22 query_22;
-struct f54_query_23 query_23;
-struct f54_query_25 query_25;
-struct f54_query_27 query_27;
-struct f54_query_29 query_29;
-struct f54_query_30 query_30;
-struct f54_query_32 query_32;
-struct f54_query_33 query_33;
-struct f54_query_35 query_35;
-struct f54_query_36 query_36;
-struct f54_query_38 query_38;
-struct f54_query_39 query_39;
-struct f54_query_40 query_40;
-struct f54_query_43 query_43;
-struct f54_query_46 query_46;
-struct f54_query_47 query_47;
-struct f54_query_49 query_49;
-struct f54_query_50 query_50;
-struct f54_query_51 query_51;
-/* tddi f54 test reporting + */
-struct f54_query_55 query_55;
-struct f54_query_57 query_57;
-struct f54_query_58 query_58;
-struct f54_query_61 query_61;
-struct f54_query_64 query_64;
-struct f54_query_65 query_65;
-struct f54_query_67 query_67;
-struct f54_query_68 query_68;
-struct f54_query_69 query_69;
-/* tddi f54 test reporting - */
-struct f54_data_31 data_31;
-struct f54_control control;
-struct mutex status_mutex;
-struct kobject *sysfs_dir;
-struct hrtimer watchdog;
-struct work_struct timeout_work;
-struct work_struct test_report_work;
-struct workqueue_struct *test_report_workqueue;
-struct synaptics_rmi4_data *rmi4_data;
+	bool is_burst;
+	bool no_auto_cal;
+	bool skip_preparation;
+	bool burst_read;
+	unsigned char status;
+	unsigned char intr_mask;
+	unsigned char intr_reg_num;
+	unsigned char tx_assigned;
+	unsigned char rx_assigned;
+	/* tddi f54 test reporting + */
+	unsigned char swap_sensor_side;
+	unsigned char left_mux_size;
+	unsigned char right_mux_size;
+	/*tddi f54 test reporting - */
+	unsigned char *report_data;
+	unsigned short query_base_addr;
+	unsigned short control_base_addr;
+	unsigned short data_base_addr;
+	unsigned short command_base_addr;
+	unsigned short fifoindex;
+	unsigned int report_size;
+	unsigned int data_buffer_size;
+	unsigned int data_pos;
+	enum f54_report_types report_type;
+	struct f54_query query;
+	struct f54_query_13 query_13;
+	struct f54_query_15 query_15;
+	struct f54_query_16 query_16;
+	struct f54_query_21 query_21;
+	struct f54_query_22 query_22;
+	struct f54_query_23 query_23;
+	struct f54_query_25 query_25;
+	struct f54_query_27 query_27;
+	struct f54_query_29 query_29;
+	struct f54_query_30 query_30;
+	struct f54_query_32 query_32;
+	struct f54_query_33 query_33;
+	struct f54_query_35 query_35;
+	struct f54_query_36 query_36;
+	struct f54_query_38 query_38;
+	struct f54_query_39 query_39;
+	struct f54_query_40 query_40;
+	struct f54_query_43 query_43;
+	struct f54_query_46 query_46;
+	struct f54_query_47 query_47;
+	struct f54_query_49 query_49;
+	struct f54_query_50 query_50;
+	struct f54_query_51 query_51;
+	/* tddi f54 test reporting + */
+	struct f54_query_55 query_55;
+	struct f54_query_57 query_57;
+	struct f54_query_58 query_58;
+	struct f54_query_61 query_61;
+	struct f54_query_64 query_64;
+	struct f54_query_65 query_65;
+	struct f54_query_67 query_67;
+	struct f54_query_68 query_68;
+	struct f54_query_69 query_69;
+	/* tddi f54 test reporting - */
+	struct f54_data_31 data_31;
+	struct f54_control control;
+	struct mutex status_mutex;
+	struct kobject *sysfs_dir;
+	struct hrtimer watchdog;
+	struct work_struct timeout_work;
+	struct work_struct test_report_work;
+	struct workqueue_struct *test_report_workqueue;
+	struct synaptics_rmi4_data *rmi4_data;
 };
 
 struct f55_query {
-union {
-	struct {
-		/* query 0 */
-		unsigned char num_of_rx_electrodes;
+	union {
+		struct {
+			/* query 0 */
+			unsigned char num_of_rx_electrodes;
 
-		/* query 1 */
-		unsigned char num_of_tx_electrodes;
+			/* query 1 */
+			unsigned char num_of_tx_electrodes;
 
-		/* query 2 */
-		unsigned char has_sensor_assignment:1;
-		unsigned char has_edge_compensation:1;
-		unsigned char curve_compensation_mode:2;
-		unsigned char has_ctrl6:1;
-		unsigned char has_alternate_transmitter_assignment:1;
-		unsigned char has_single_layer_multi_touch:1;
-		unsigned char has_query5:1;
-	} __packed;
-	unsigned char data[3];
-};
+			/* query 2 */
+			unsigned char has_sensor_assignment:1;
+			unsigned char has_edge_compensation:1;
+			unsigned char curve_compensation_mode:2;
+			unsigned char has_ctrl6:1;
+			unsigned char has_alternate_transmitter_assignment:1;
+			unsigned char has_single_layer_multi_touch:1;
+			unsigned char has_query5:1;
+		} __packed;
+		unsigned char data[3];
+	};
 };
 
 struct f55_query_3 {
-union {
-	struct {
-		unsigned char has_ctrl8:1;
-		unsigned char has_ctrl9:1;
-		unsigned char has_oncell_pattern_support:1;
-		unsigned char has_data0:1;
-		unsigned char has_single_wide_pattern_support:1;
-		unsigned char has_mirrored_tx_pattern_support:1;
-		unsigned char has_discrete_pattern_support:1;
-		unsigned char has_query9:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl8:1;
+			unsigned char has_ctrl9:1;
+			unsigned char has_oncell_pattern_support:1;
+			unsigned char has_data0:1;
+			unsigned char has_single_wide_pattern_support:1;
+			unsigned char has_mirrored_tx_pattern_support:1;
+			unsigned char has_discrete_pattern_support:1;
+			unsigned char has_query9:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_query_5 {
-union {
-	struct {
-		unsigned char has_corner_compensation:1;
-		unsigned char has_ctrl12:1;
-		unsigned char has_trx_configuration:1;
-		unsigned char has_ctrl13:1;
-		unsigned char f55_query5_b4:1;
-		unsigned char has_ctrl14:1;
-		unsigned char has_basis_function:1;
-		unsigned char has_query17:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_corner_compensation:1;
+			unsigned char has_ctrl12:1;
+			unsigned char has_trx_configuration:1;
+			unsigned char has_ctrl13:1;
+			unsigned char f55_query5_b4:1;
+			unsigned char has_ctrl14:1;
+			unsigned char has_basis_function:1;
+			unsigned char has_query17:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_query_17 {
-union {
-	struct {
-		unsigned char f55_query17_b0:1;
-		unsigned char has_ctrl16:1;
-		unsigned char has_ctrl18_ctrl19:1;
-		unsigned char has_ctrl17:1;
-		unsigned char has_ctrl20:1;
-		unsigned char has_ctrl21:1;
-		unsigned char has_ctrl22:1;
-		unsigned char has_query18:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f55_query17_b0:1;
+			unsigned char has_ctrl16:1;
+			unsigned char has_ctrl18_ctrl19:1;
+			unsigned char has_ctrl17:1;
+			unsigned char has_ctrl20:1;
+			unsigned char has_ctrl21:1;
+			unsigned char has_ctrl22:1;
+			unsigned char has_query18:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_query_18 {
-union {
-	struct {
-		unsigned char has_ctrl23:1;
-		unsigned char has_ctrl24:1;
-		unsigned char has_query19:1;
-		unsigned char has_ctrl25:1;
-		unsigned char has_ctrl26:1;
-		unsigned char has_ctrl27_query20:1;
-		unsigned char has_ctrl28_query21:1;
-		unsigned char has_query22:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl23:1;
+			unsigned char has_ctrl24:1;
+			unsigned char has_query19:1;
+			unsigned char has_ctrl25:1;
+			unsigned char has_ctrl26:1;
+			unsigned char has_ctrl27_query20:1;
+			unsigned char has_ctrl28_query21:1;
+			unsigned char has_query22:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_query_22 {
-union {
-	struct {
-		unsigned char has_ctrl29:1;
-		unsigned char has_query23:1;
-		unsigned char has_guard_disable:1;
-		unsigned char has_ctrl30:1;
-		unsigned char has_ctrl31:1;
-		unsigned char has_ctrl32:1;
-		unsigned char has_query24_through_query27:1;
-		unsigned char has_query28:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl29:1;
+			unsigned char has_query23:1;
+			unsigned char has_guard_disable:1;
+			unsigned char has_ctrl30:1;
+			unsigned char has_ctrl31:1;
+			unsigned char has_ctrl32:1;
+			unsigned char has_query24_through_query27:1;
+			unsigned char has_query28:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_query_23 {
-union {
-	struct {
-		unsigned char amp_sensor_enabled:1;
-		unsigned char image_transposed:1;
-		unsigned char first_column_at_left_side:1;
-		unsigned char size_of_column2mux:5;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char amp_sensor_enabled:1;
+			unsigned char image_transposed:1;
+			unsigned char first_column_at_left_side:1;
+			unsigned char size_of_column2mux:5;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_query_28 {
-union {
-	struct {
-		unsigned char f55_query28_b0__4:5;
-		unsigned char has_ctrl37:1;
-		unsigned char has_query29:1;
-		unsigned char has_query30:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char f55_query28_b0__4:5;
+			unsigned char has_ctrl37:1;
+			unsigned char has_query29:1;
+			unsigned char has_query30:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_query_30 {
-union {
-	struct {
-		unsigned char has_ctrl38:1;
-		unsigned char has_query31_query32:1;
-		unsigned char has_ctrl39:1;
-		unsigned char has_ctrl40:1;
-		unsigned char has_ctrl41:1;
-		unsigned char has_ctrl42:1;
-		unsigned char has_ctrl43_ctrl44:1;
-		unsigned char has_query33:1;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_ctrl38:1;
+			unsigned char has_query31_query32:1;
+			unsigned char has_ctrl39:1;
+			unsigned char has_ctrl40:1;
+			unsigned char has_ctrl41:1;
+			unsigned char has_ctrl42:1;
+			unsigned char has_ctrl43_ctrl44:1;
+			unsigned char has_query33:1;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_query_33 {
-union {
-	struct {
-		unsigned char has_extended_amp_pad:1;
-		unsigned char has_extended_amp_btn:1;
-		unsigned char has_ctrl45_ctrl46:1;
-		unsigned char f55_query33_b3:1;
-		unsigned char has_ctrl47_sub0_sub1:1;
-		unsigned char f55_query33_b5__7:3;
-	} __packed;
-	unsigned char data[1];
-};
+	union {
+		struct {
+			unsigned char has_extended_amp_pad:1;
+			unsigned char has_extended_amp_btn:1;
+			unsigned char has_ctrl45_ctrl46:1;
+			unsigned char f55_query33_b3:1;
+			unsigned char has_ctrl47_sub0_sub1:1;
+			unsigned char f55_query33_b5__7:3;
+		} __packed;
+		unsigned char data[1];
+	};
 };
 
 struct f55_control_43 {
-union {
-	struct {
-		unsigned char swap_sensor_side:1;
-		unsigned char f55_ctrl43_b1__7:7;
-		unsigned char afe_l_mux_size:4;
-		unsigned char afe_r_mux_size:4;
-	} __packed;
-	unsigned char data[2];
-};
+	union {
+		struct {
+			unsigned char swap_sensor_side:1;
+			unsigned char f55_ctrl43_b1__7:7;
+			unsigned char afe_l_mux_size:4;
+			unsigned char afe_r_mux_size:4;
+		} __packed;
+		unsigned char data[2];
+	};
 };
 
 struct synaptics_rmi4_f55_handle {
-bool amp_sensor;
-bool extended_amp;
-bool extended_amp_btn;
-bool has_force;
-unsigned char size_of_column2mux;
-unsigned char afe_mux_offset;
-unsigned char force_tx_offset;
-unsigned char force_rx_offset;
-unsigned char *tx_assignment;
-unsigned char *rx_assignment;
-unsigned char *force_tx_assignment;
-unsigned char *force_rx_assignment;
-unsigned short query_base_addr;
-unsigned short control_base_addr;
-unsigned short data_base_addr;
-unsigned short command_base_addr;
-struct f55_query query;
-struct f55_query_3 query_3;
-struct f55_query_5 query_5;
-struct f55_query_17 query_17;
-struct f55_query_18 query_18;
-struct f55_query_22 query_22;
-struct f55_query_23 query_23;
-struct f55_query_28 query_28;
-struct f55_query_30 query_30;
-struct f55_query_33 query_33;
+	bool amp_sensor;
+	bool extended_amp;
+	bool extended_amp_btn;
+	bool has_force;
+	unsigned char size_of_column2mux;
+	unsigned char afe_mux_offset;
+	unsigned char force_tx_offset;
+	unsigned char force_rx_offset;
+	unsigned char *tx_assignment;
+	unsigned char *rx_assignment;
+	unsigned char *force_tx_assignment;
+	unsigned char *force_rx_assignment;
+	unsigned short query_base_addr;
+	unsigned short control_base_addr;
+	unsigned short data_base_addr;
+	unsigned short command_base_addr;
+	struct f55_query query;
+	struct f55_query_3 query_3;
+	struct f55_query_5 query_5;
+	struct f55_query_17 query_17;
+	struct f55_query_18 query_18;
+	struct f55_query_22 query_22;
+	struct f55_query_23 query_23;
+	struct f55_query_28 query_28;
+	struct f55_query_30 query_30;
+	struct f55_query_33 query_33;
 };
 
 struct f21_query_2 {
-union {
-	struct {
-		unsigned char size_of_query3;
+	union {
 		struct {
-			unsigned char query0_is_present:1;
-			unsigned char query1_is_present:1;
-			unsigned char query2_is_present:1;
-			unsigned char query3_is_present:1;
-			unsigned char query4_is_present:1;
-			unsigned char query5_is_present:1;
-			unsigned char query6_is_present:1;
-			unsigned char query7_is_present:1;
-		} __packed;
-		struct {
-			unsigned char query8_is_present:1;
-			unsigned char query9_is_present:1;
-			unsigned char query10_is_present:1;
-			unsigned char query11_is_present:1;
-			unsigned char query12_is_present:1;
-			unsigned char query13_is_present:1;
-			unsigned char query14_is_present:1;
-			unsigned char query15_is_present:1;
-		} __packed;
+			unsigned char size_of_query3;
+			struct {
+				unsigned char query0_is_present:1;
+				unsigned char query1_is_present:1;
+				unsigned char query2_is_present:1;
+				unsigned char query3_is_present:1;
+				unsigned char query4_is_present:1;
+				unsigned char query5_is_present:1;
+				unsigned char query6_is_present:1;
+				unsigned char query7_is_present:1;
+			} __packed;
+			struct {
+				unsigned char query8_is_present:1;
+				unsigned char query9_is_present:1;
+				unsigned char query10_is_present:1;
+				unsigned char query11_is_present:1;
+				unsigned char query12_is_present:1;
+				unsigned char query13_is_present:1;
+				unsigned char query14_is_present:1;
+				unsigned char query15_is_present:1;
+			} __packed;
+		};
+		unsigned char data[3];
 	};
-	unsigned char data[3];
-};
 };
 
 struct f21_query_5 {
-union {
-	struct {
-		unsigned char size_of_query6;
+	union {
 		struct {
-			unsigned char ctrl0_is_present:1;
-			unsigned char ctrl1_is_present:1;
-			unsigned char ctrl2_is_present:1;
-			unsigned char ctrl3_is_present:1;
-			unsigned char ctrl4_is_present:1;
-			unsigned char ctrl5_is_present:1;
-			unsigned char ctrl6_is_present:1;
-			unsigned char ctrl7_is_present:1;
-		} __packed;
-		struct {
-			unsigned char ctrl8_is_present:1;
-			unsigned char ctrl9_is_present:1;
-			unsigned char ctrl10_is_present:1;
-			unsigned char ctrl11_is_present:1;
-			unsigned char ctrl12_is_present:1;
-			unsigned char ctrl13_is_present:1;
-			unsigned char ctrl14_is_present:1;
-			unsigned char ctrl15_is_present:1;
-		} __packed;
-		struct {
-			unsigned char ctrl16_is_present:1;
-			unsigned char ctrl17_is_present:1;
-			unsigned char ctrl18_is_present:1;
-			unsigned char ctrl19_is_present:1;
-			unsigned char ctrl20_is_present:1;
-			unsigned char ctrl21_is_present:1;
-			unsigned char ctrl22_is_present:1;
-			unsigned char ctrl23_is_present:1;
-		} __packed;
+			unsigned char size_of_query6;
+			struct {
+				unsigned char ctrl0_is_present:1;
+				unsigned char ctrl1_is_present:1;
+				unsigned char ctrl2_is_present:1;
+				unsigned char ctrl3_is_present:1;
+				unsigned char ctrl4_is_present:1;
+				unsigned char ctrl5_is_present:1;
+				unsigned char ctrl6_is_present:1;
+				unsigned char ctrl7_is_present:1;
+			} __packed;
+			struct {
+				unsigned char ctrl8_is_present:1;
+				unsigned char ctrl9_is_present:1;
+				unsigned char ctrl10_is_present:1;
+				unsigned char ctrl11_is_present:1;
+				unsigned char ctrl12_is_present:1;
+				unsigned char ctrl13_is_present:1;
+				unsigned char ctrl14_is_present:1;
+				unsigned char ctrl15_is_present:1;
+			} __packed;
+			struct {
+				unsigned char ctrl16_is_present:1;
+				unsigned char ctrl17_is_present:1;
+				unsigned char ctrl18_is_present:1;
+				unsigned char ctrl19_is_present:1;
+				unsigned char ctrl20_is_present:1;
+				unsigned char ctrl21_is_present:1;
+				unsigned char ctrl22_is_present:1;
+				unsigned char ctrl23_is_present:1;
+			} __packed;
+		};
+		unsigned char data[4];
 	};
-	unsigned char data[4];
-};
 };
 
 struct f21_query_11 {
-union {
-	struct {
-		unsigned char has_high_resolution_force:1;
-		unsigned char has_force_sensing_txrx_mapping:1;
-		unsigned char f21_query11_00_b2__7:6;
-		unsigned char f21_query11_00_reserved;
-		unsigned char max_number_of_force_sensors;
-		unsigned char max_number_of_force_txs;
-		unsigned char max_number_of_force_rxs;
-		unsigned char f21_query11_01_reserved;
-	} __packed;
-	unsigned char data[6];
-};
+	union {
+		struct {
+			unsigned char has_high_resolution_force:1;
+			unsigned char has_force_sensing_txrx_mapping:1;
+			unsigned char f21_query11_00_b2__7:6;
+			unsigned char f21_query11_00_reserved;
+			unsigned char max_number_of_force_sensors;
+			unsigned char max_number_of_force_txs;
+			unsigned char max_number_of_force_rxs;
+			unsigned char f21_query11_01_reserved;
+		} __packed;
+		unsigned char data[6];
+	};
 };
 
 struct synaptics_rmi4_f21_handle {
-bool has_force;
-unsigned char tx_assigned;
-unsigned char rx_assigned;
-unsigned char max_num_of_tx;
-unsigned char max_num_of_rx;
-unsigned char max_num_of_txrx;
-unsigned char *force_txrx_assignment;
-unsigned short query_base_addr;
-unsigned short control_base_addr;
-unsigned short data_base_addr;
-unsigned short command_base_addr;
+	bool has_force;
+	unsigned char tx_assigned;
+	unsigned char rx_assigned;
+	unsigned char max_num_of_tx;
+	unsigned char max_num_of_rx;
+	unsigned char max_num_of_txrx;
+	unsigned char *force_txrx_assignment;
+	unsigned short query_base_addr;
+	unsigned short control_base_addr;
+	unsigned short data_base_addr;
+	unsigned short command_base_addr;
 };
 
 show_prototype(num_of_mapped_tx)
@@ -1663,52 +1663,52 @@ show_store_prototype(burst)
 /* tddi f54 test reporting - */
 
 static struct attribute *attrs[] = {
-attrify(num_of_mapped_tx),
-attrify(num_of_mapped_rx),
-attrify(tx_mapping),
-attrify(rx_mapping),
-attrify(num_of_mapped_force_tx),
-attrify(num_of_mapped_force_rx),
-attrify(force_tx_mapping),
-attrify(force_rx_mapping),
-attrify(report_size),
-attrify(status),
-attrify(ito_test_result),
-attrify(do_preparation),
-attrify(force_cal),
-attrify(get_report),
-attrify(resume_touch),
-attrify(do_afe_calibration),
-attrify(report_type),
-attrify(fifoindex),
-attrify(no_auto_cal),
-attrify(read_report),
-/* tddi f54 test reporting + */
-attrify(tddi_full_raw),
-attrify(tddi_noise),
-attrify(tddi_ee_short),
-attrify(tddi_amp_open),
-attrify(tddi_amp_electrode_open),
-attrify(burst),
-/* tddi f54 test reporting - */
-NULL,
+	attrify(num_of_mapped_tx),
+	attrify(num_of_mapped_rx),
+	attrify(tx_mapping),
+	attrify(rx_mapping),
+	attrify(num_of_mapped_force_tx),
+	attrify(num_of_mapped_force_rx),
+	attrify(force_tx_mapping),
+	attrify(force_rx_mapping),
+	attrify(report_size),
+	attrify(status),
+	attrify(ito_test_result),
+	attrify(do_preparation),
+	attrify(force_cal),
+	attrify(get_report),
+	attrify(resume_touch),
+	attrify(do_afe_calibration),
+	attrify(report_type),
+	attrify(fifoindex),
+	attrify(no_auto_cal),
+	attrify(read_report),
+	/* tddi f54 test reporting + */
+	attrify(tddi_full_raw),
+	attrify(tddi_noise),
+	attrify(tddi_ee_short),
+	attrify(tddi_amp_open),
+	attrify(tddi_amp_electrode_open),
+	attrify(burst),
+	/* tddi f54 test reporting - */
+	NULL,
 };
 
 static struct attribute_group attr_group = {
-.attrs = attrs,
+	.attrs = attrs,
 };
 
 static ssize_t test_sysfs_data_read(struct file *data_file,
-	struct kobject *kobj, struct bin_attribute *attributes,
-	char *buf, loff_t pos, size_t count);
+		struct kobject *kobj, struct bin_attribute *attributes,
+		char *buf, loff_t pos, size_t count);
 
 static struct bin_attribute test_report_data = {
-.attr = {
-	.name = "report_data",
-	.mode = S_IRUGO,
-},
-.size = 0,
-.read = test_sysfs_data_read,
+	.attr = {
+		.name = "report_data",
+		.mode = S_IRUGO,
+	},
+	.size = 0,
+	.read = test_sysfs_data_read,
 };
 
 static struct synaptics_rmi4_f54_handle *f54;
@@ -1748,1741 +1748,1741 @@ DECLARE_COMPLETION(test_remove_complete);
 
 static bool test_report_type_valid(enum f54_report_types report_type)
 {
-switch (report_type) {
-case F54_8BIT_IMAGE:
-case F54_16BIT_IMAGE:
-case F54_RAW_16BIT_IMAGE:
-case F54_HIGH_RESISTANCE:
-case F54_TX_TO_TX_SHORTS:
-case F54_RX_TO_RX_SHORTS_1:
-case F54_TRUE_BASELINE:
-case F54_FULL_RAW_CAP_MIN_MAX:
-case F54_RX_OPENS_1:
-case F54_TX_OPENS:
-case F54_TX_TO_GND_SHORTS:
-case F54_RX_TO_RX_SHORTS_2:
-case F54_RX_OPENS_2:
-case F54_FULL_RAW_CAP:
-case F54_FULL_RAW_CAP_NO_RX_COUPLING:
-case F54_SENSOR_SPEED:
-case F54_ADC_RANGE:
-case F54_TRX_OPENS:
-case F54_TRX_TO_GND_SHORTS:
-case F54_TRX_SHORTS:
-case F54_ABS_RAW_CAP:
-case F54_ABS_DELTA_CAP:
-case F54_ABS_HYBRID_DELTA_CAP:
-case F54_ABS_HYBRID_RAW_CAP:
-case F54_AMP_FULL_RAW_CAP:
-case F54_AMP_RAW_ADC:
-/* tddi f54 test reporting + */
-case F54_FULL_RAW_CAP_TDDI:
-case F54_NOISE_TDDI:
-case F54_EE_SHORT_TDDI:
-/* tddi f54 test reporting - */
-	return true;
-	break;
-default:
-	f54->report_type = INVALID_REPORT_TYPE;
-	f54->report_size = 0;
-	return false;
-}
+	switch (report_type) {
+	case F54_8BIT_IMAGE:
+	case F54_16BIT_IMAGE:
+	case F54_RAW_16BIT_IMAGE:
+	case F54_HIGH_RESISTANCE:
+	case F54_TX_TO_TX_SHORTS:
+	case F54_RX_TO_RX_SHORTS_1:
+	case F54_TRUE_BASELINE:
+	case F54_FULL_RAW_CAP_MIN_MAX:
+	case F54_RX_OPENS_1:
+	case F54_TX_OPENS:
+	case F54_TX_TO_GND_SHORTS:
+	case F54_RX_TO_RX_SHORTS_2:
+	case F54_RX_OPENS_2:
+	case F54_FULL_RAW_CAP:
+	case F54_FULL_RAW_CAP_NO_RX_COUPLING:
+	case F54_SENSOR_SPEED:
+	case F54_ADC_RANGE:
+	case F54_TRX_OPENS:
+	case F54_TRX_TO_GND_SHORTS:
+	case F54_TRX_SHORTS:
+	case F54_ABS_RAW_CAP:
+	case F54_ABS_DELTA_CAP:
+	case F54_ABS_HYBRID_DELTA_CAP:
+	case F54_ABS_HYBRID_RAW_CAP:
+	case F54_AMP_FULL_RAW_CAP:
+	case F54_AMP_RAW_ADC:
+	/* tddi f54 test reporting + */
+	case F54_FULL_RAW_CAP_TDDI:
+	case F54_NOISE_TDDI:
+	case F54_EE_SHORT_TDDI:
+	/* tddi f54 test reporting - */
+		return true;
+		break;
+	default:
+		f54->report_type = INVALID_REPORT_TYPE;
+		f54->report_size = 0;
+		return false;
+	}
 }
 
 static void test_set_report_size(void)
 {
-int retval;
-unsigned char tx = f54->tx_assigned;
-unsigned char rx = f54->rx_assigned;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char tx = f54->tx_assigned;
+	unsigned char rx = f54->rx_assigned;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-switch (f54->report_type) {
-case F54_8BIT_IMAGE:
-	f54->report_size = tx * rx;
-	break;
-case F54_16BIT_IMAGE:
-case F54_RAW_16BIT_IMAGE:
-case F54_TRUE_BASELINE:
-case F54_FULL_RAW_CAP:
-case F54_FULL_RAW_CAP_NO_RX_COUPLING:
-case F54_SENSOR_SPEED:
-case F54_AMP_FULL_RAW_CAP:
-case F54_AMP_RAW_ADC:
-/* tddi f54 test reporting + */
-case F54_FULL_RAW_CAP_TDDI:
-	if (f55->extended_amp_btn) {
-		tx += 1;
-	}
-	f54->report_size = 2 * tx * rx;
-	break;
-case F54_NOISE_TDDI:
-/* tddi f54 test reporting - */
-	f54->report_size = 2 * tx * rx;
-	break;
-/* tddi f54 test reporting +  */
-case F54_EE_SHORT_TDDI:
-	f54->report_size = 2 * 2 * tx * rx;
-	break;
-/* tddi f54 test reporting - */
-case F54_HIGH_RESISTANCE:
-	f54->report_size = HIGH_RESISTANCE_DATA_SIZE;
-	break;
-case F54_TX_TO_TX_SHORTS:
-case F54_TX_OPENS:
-case F54_TX_TO_GND_SHORTS:
-	f54->report_size = (tx + 7) / 8;
-	break;
-case F54_RX_TO_RX_SHORTS_1:
-case F54_RX_OPENS_1:
-	if (rx < tx)
-		f54->report_size = 2 * rx * rx;
-	else
+	switch (f54->report_type) {
+	case F54_8BIT_IMAGE:
+		f54->report_size = tx * rx;
+		break;
+	case F54_16BIT_IMAGE:
+	case F54_RAW_16BIT_IMAGE:
+	case F54_TRUE_BASELINE:
+	case F54_FULL_RAW_CAP:
+	case F54_FULL_RAW_CAP_NO_RX_COUPLING:
+	case F54_SENSOR_SPEED:
+	case F54_AMP_FULL_RAW_CAP:
+	case F54_AMP_RAW_ADC:
+	/* tddi f54 test reporting + */
+	case F54_FULL_RAW_CAP_TDDI:
+		if (f55->extended_amp_btn) {
+			tx += 1;
+		}
 		f54->report_size = 2 * tx * rx;
-	break;
-case F54_FULL_RAW_CAP_MIN_MAX:
-	f54->report_size = FULL_RAW_CAP_MIN_MAX_DATA_SIZE;
-	break;
-case F54_RX_TO_RX_SHORTS_2:
-case F54_RX_OPENS_2:
-	if (rx <= tx)
-		f54->report_size = 0;
-	else
-		f54->report_size = 2 * rx * (rx - tx);
-	break;
-case F54_ADC_RANGE:
-	if (f54->query.has_signal_clarity) {
-		retval = synaptics_rmi4_reg_read(rmi4_data,
-				f54->control.reg_41->address,
-				f54->control.reg_41->data,
-				sizeof(f54->control.reg_41->data));
-		if (retval < 0) {
-			dev_dbg(rmi4_data->pdev->dev.parent,
-					"%s: Failed to read control reg_41\n",
-					__func__);
+		break;
+	case F54_NOISE_TDDI:
+	/* tddi f54 test reporting - */
+		f54->report_size = 2 * tx * rx;
+		break;
+	/* tddi f54 test reporting +  */
+	case F54_EE_SHORT_TDDI:
+		f54->report_size = 2 * 2 * tx * rx;
+		break;
+	/* tddi f54 test reporting - */
+	case F54_HIGH_RESISTANCE:
+		f54->report_size = HIGH_RESISTANCE_DATA_SIZE;
+		break;
+	case F54_TX_TO_TX_SHORTS:
+	case F54_TX_OPENS:
+	case F54_TX_TO_GND_SHORTS:
+		f54->report_size = (tx + 7) / 8;
+		break;
+	case F54_RX_TO_RX_SHORTS_1:
+	case F54_RX_OPENS_1:
+		if (rx < tx)
+			f54->report_size = 2 * rx * rx;
+		else
+			f54->report_size = 2 * tx * rx;
+		break;
+	case F54_FULL_RAW_CAP_MIN_MAX:
+		f54->report_size = FULL_RAW_CAP_MIN_MAX_DATA_SIZE;
+		break;
+	case F54_RX_TO_RX_SHORTS_2:
+	case F54_RX_OPENS_2:
+		if (rx <= tx)
 			f54->report_size = 0;
-			break;
+		else
+			f54->report_size = 2 * rx * (rx - tx);
+		break;
+	case F54_ADC_RANGE:
+		if (f54->query.has_signal_clarity) {
+			retval = synaptics_rmi4_reg_read(rmi4_data,
+					f54->control.reg_41->address,
+					f54->control.reg_41->data,
+					sizeof(f54->control.reg_41->data));
+			if (retval < 0) {
+				dev_dbg(rmi4_data->pdev->dev.parent,
+						"%s: Failed to read control reg_41\n",
+						__func__);
+				f54->report_size = 0;
+				break;
+			}
+			if (!f54->control.reg_41->no_signal_clarity) {
+				if (tx % 4)
+					tx += 4 - (tx % 4);
+			}
 		}
-		if (!f54->control.reg_41->no_signal_clarity) {
-			if (tx % 4)
-				tx += 4 - (tx % 4);
-		}
+		f54->report_size = 2 * tx * rx;
+		break;
+	case F54_TRX_OPENS:
+	case F54_TRX_TO_GND_SHORTS:
+	case F54_TRX_SHORTS:
+		f54->report_size = TRX_OPEN_SHORT_DATA_SIZE;
+		break;
+	case F54_ABS_RAW_CAP:
+	case F54_ABS_DELTA_CAP:
+	case F54_ABS_HYBRID_DELTA_CAP:
+	case F54_ABS_HYBRID_RAW_CAP:
+		tx += f21->tx_assigned;
+		rx += f21->rx_assigned;
+		f54->report_size = 4 * (tx + rx);
+		break;
+	default:
+		f54->report_size = 0;
 	}
-	f54->report_size = 2 * tx * rx;
-	break;
-case F54_TRX_OPENS:
-case F54_TRX_TO_GND_SHORTS:
-case F54_TRX_SHORTS:
-	f54->report_size = TRX_OPEN_SHORT_DATA_SIZE;
-	break;
-case F54_ABS_RAW_CAP:
-case F54_ABS_DELTA_CAP:
-case F54_ABS_HYBRID_DELTA_CAP:
-case F54_ABS_HYBRID_RAW_CAP:
-	tx += f21->tx_assigned;
-	rx += f21->rx_assigned;
-	f54->report_size = 4 * (tx + rx);
-	break;
-default:
-	f54->report_size = 0;
-}
 
-return;
+	return;
 }
 
 static int test_set_interrupt(bool set)
 {
-int retval;
-unsigned char ii;
-unsigned char zero = 0x00;
-unsigned char *intr_mask;
-unsigned short f01_ctrl_reg;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char ii;
+	unsigned char zero = 0x00;
+	unsigned char *intr_mask;
+	unsigned short f01_ctrl_reg;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-intr_mask = rmi4_data->intr_mask;
-f01_ctrl_reg = rmi4_data->f01_ctrl_base_addr + 1 + f54->intr_reg_num;
+	intr_mask = rmi4_data->intr_mask;
+	f01_ctrl_reg = rmi4_data->f01_ctrl_base_addr + 1 + f54->intr_reg_num;
 
-if (!set) {
-	retval = synaptics_rmi4_reg_write(rmi4_data,
-			f01_ctrl_reg,
-			&zero,
-			sizeof(zero));
-	if (retval < 0)
-		return retval;
-}
+	if (!set) {
+		retval = synaptics_rmi4_reg_write(rmi4_data,
+				f01_ctrl_reg,
+				&zero,
+				sizeof(zero));
+		if (retval < 0)
+			return retval;
+	}
 
-for (ii = 0; ii < rmi4_data->num_of_intr_regs; ii++) {
-	if (intr_mask[ii] != 0x00) {
-		f01_ctrl_reg = rmi4_data->f01_ctrl_base_addr + 1 + ii;
-		if (set) {
-			retval = synaptics_rmi4_reg_write(rmi4_data,
-					f01_ctrl_reg,
-					&zero,
-					sizeof(zero));
-			if (retval < 0)
-				return retval;
-		} else {
-			retval = synaptics_rmi4_reg_write(rmi4_data,
-					f01_ctrl_reg,
-					&(intr_mask[ii]),
-					sizeof(intr_mask[ii]));
-			if (retval < 0)
-				return retval;
+	for (ii = 0; ii < rmi4_data->num_of_intr_regs; ii++) {
+		if (intr_mask[ii] != 0x00) {
+			f01_ctrl_reg = rmi4_data->f01_ctrl_base_addr + 1 + ii;
+			if (set) {
+				retval = synaptics_rmi4_reg_write(rmi4_data,
+						f01_ctrl_reg,
+						&zero,
+						sizeof(zero));
+				if (retval < 0)
+					return retval;
+			} else {
+				retval = synaptics_rmi4_reg_write(rmi4_data,
+						f01_ctrl_reg,
+						&(intr_mask[ii]),
+						sizeof(intr_mask[ii]));
+				if (retval < 0)
+					return retval;
+			}
 		}
 	}
-}
 
-f01_ctrl_reg = rmi4_data->f01_ctrl_base_addr + 1 + f54->intr_reg_num;
+	f01_ctrl_reg = rmi4_data->f01_ctrl_base_addr + 1 + f54->intr_reg_num;
 
-if (set) {
-	retval = synaptics_rmi4_reg_write(rmi4_data,
-			f01_ctrl_reg,
-			&f54->intr_mask,
-			1);
-	if (retval < 0)
-		return retval;
-}
+	if (set) {
+		retval = synaptics_rmi4_reg_write(rmi4_data,
+				f01_ctrl_reg,
+				&f54->intr_mask,
+				1);
+		if (retval < 0)
+			return retval;
+	}
 
-return 0;
+	return 0;
 }
 
 static int test_wait_for_command_completion(void)
 {
-int retval;
-unsigned char value;
-unsigned char timeout_count;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char value;
+	unsigned char timeout_count;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-timeout_count = 0;
-do {
-	retval = synaptics_rmi4_reg_read(rmi4_data,
-			f54->command_base_addr,
-			&value,
-			sizeof(value));
-	if (retval < 0) {
+	timeout_count = 0;
+	do {
+		retval = synaptics_rmi4_reg_read(rmi4_data,
+				f54->command_base_addr,
+				&value,
+				sizeof(value));
+		if (retval < 0) {
+			dev_err(rmi4_data->pdev->dev.parent,
+					"%s: Failed to read command register\n",
+					__func__);
+			return retval;
+		}
+
+		if (value == 0x00)
+			break;
+
+		msleep(100);
+		timeout_count++;
+	} while (timeout_count < COMMAND_TIMEOUT_100MS);
+
+	if (timeout_count == COMMAND_TIMEOUT_100MS) {
 		dev_err(rmi4_data->pdev->dev.parent,
-				"%s: Failed to read command register\n",
+				"%s: Timed out waiting for command completion\n",
 				__func__);
-		return retval;
+		return -ETIMEDOUT;
 	}
 
-	if (value == 0x00)
-		break;
-
-	msleep(100);
-	timeout_count++;
-} while (timeout_count < COMMAND_TIMEOUT_100MS);
-
-if (timeout_count == COMMAND_TIMEOUT_100MS) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Timed out waiting for command completion\n",
-			__func__);
-	return -ETIMEDOUT;
-}
-
-return 0;
+	return 0;
 }
 
 static int test_do_command(unsigned char command)
 {
-int retval;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		f54->command_base_addr,
-		&command,
-		sizeof(command));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to write command\n",
-			__func__);
-	return retval;
-}
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			f54->command_base_addr,
+			&command,
+			sizeof(command));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to write command\n",
+				__func__);
+		return retval;
+	}
 
-retval = test_wait_for_command_completion();
-if (retval < 0)
-	return retval;
+	retval = test_wait_for_command_completion();
+	if (retval < 0)
+		return retval;
 
-return 0;
+	return 0;
 }
 
 static int test_do_preparation(void)
 {
-int retval;
-unsigned char value;
-unsigned char zero = 0x00;
-unsigned char device_ctrl;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char value;
+	unsigned char zero = 0x00;
+	unsigned char device_ctrl;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = synaptics_rmi4_reg_read(rmi4_data,
-		rmi4_data->f01_ctrl_base_addr,
-		&device_ctrl,
-		sizeof(device_ctrl));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to set no sleep\n",
-			__func__);
-	return retval;
-}
+	retval = synaptics_rmi4_reg_read(rmi4_data,
+			rmi4_data->f01_ctrl_base_addr,
+			&device_ctrl,
+			sizeof(device_ctrl));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to set no sleep\n",
+				__func__);
+		return retval;
+	}
 
-device_ctrl |= NO_SLEEP_ON;
+	device_ctrl |= NO_SLEEP_ON;
 
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		rmi4_data->f01_ctrl_base_addr,
-		&device_ctrl,
-		sizeof(device_ctrl));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to set no sleep\n",
-			__func__);
-	return retval;
-}
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			rmi4_data->f01_ctrl_base_addr,
+			&device_ctrl,
+			sizeof(device_ctrl));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to set no sleep\n",
+				__func__);
+		return retval;
+	}
 
-if (f54->skip_preparation)
+	if (f54->skip_preparation)
+		return 0;
+
+	switch (f54->report_type) {
+	case F54_16BIT_IMAGE:
+	case F54_RAW_16BIT_IMAGE:
+	case F54_SENSOR_SPEED:
+	case F54_ADC_RANGE:
+	case F54_ABS_RAW_CAP:
+	case F54_ABS_DELTA_CAP:
+	case F54_ABS_HYBRID_DELTA_CAP:
+	case F54_ABS_HYBRID_RAW_CAP:
+	/* tddi f54 test reporting + */
+	case F54_FULL_RAW_CAP_TDDI:
+	case F54_NOISE_TDDI:
+	case F54_EE_SHORT_TDDI:
+	/* tddi f54 test reporting - */
+		break;
+	case F54_AMP_RAW_ADC:
+		if (f54->query_49.has_ctrl188) {
+			retval = synaptics_rmi4_reg_read(rmi4_data,
+					f54->control.reg_188->address,
+					f54->control.reg_188->data,
+					sizeof(f54->control.reg_188->data));
+			if (retval < 0) {
+				dev_err(rmi4_data->pdev->dev.parent,
+						"%s: Failed to set start production test\n",
+						__func__);
+				return retval;
+			}
+			f54->control.reg_188->start_production_test = 1;
+			retval = synaptics_rmi4_reg_write(rmi4_data,
+					f54->control.reg_188->address,
+					f54->control.reg_188->data,
+					sizeof(f54->control.reg_188->data));
+			if (retval < 0) {
+				dev_err(rmi4_data->pdev->dev.parent,
+						"%s: Failed to set start production test\n",
+						__func__);
+				return retval;
+			}
+		}
+		break;
+	default:
+		if (f54->query.touch_controller_family == 1)
+			disable_cbc(reg_7);
+		else if (f54->query.has_ctrl88)
+			disable_cbc(reg_88);
+
+		if (f54->query.has_0d_acquisition_control)
+			disable_cbc(reg_57);
+
+		if ((f54->query.has_query15) &&
+				(f54->query_15.has_query25) &&
+				(f54->query_25.has_query27) &&
+				(f54->query_27.has_query29) &&
+				(f54->query_29.has_query30) &&
+				(f54->query_30.has_query32) &&
+				(f54->query_32.has_query33) &&
+				(f54->query_33.has_query36) &&
+				(f54->query_36.has_query38) &&
+				(f54->query_38.has_ctrl149)) {
+			retval = synaptics_rmi4_reg_write(rmi4_data,
+					f54->control.reg_149->address,
+					&zero,
+					sizeof(f54->control.reg_149->data));
+			if (retval < 0) {
+				dev_err(rmi4_data->pdev->dev.parent,
+						"%s: Failed to disable global CBC\n",
+						__func__);
+				return retval;
+			}
+		}
+
+		if (f54->query.has_signal_clarity) {
+			retval = synaptics_rmi4_reg_read(rmi4_data,
+					f54->control.reg_41->address,
+					&value,
+					sizeof(f54->control.reg_41->data));
+			if (retval < 0) {
+				dev_err(rmi4_data->pdev->dev.parent,
+						"%s: Failed to disable signal clarity\n",
+						__func__);
+				return retval;
+			}
+			value |= 0x01;
+			retval = synaptics_rmi4_reg_write(rmi4_data,
+					f54->control.reg_41->address,
+					&value,
+					sizeof(f54->control.reg_41->data));
+			if (retval < 0) {
+				dev_err(rmi4_data->pdev->dev.parent,
+						"%s: Failed to disable signal clarity\n",
+						__func__);
+				return retval;
+			}
+		}
+
+		retval = test_do_command(COMMAND_FORCE_UPDATE);
+		if (retval < 0) {
+			dev_err(rmi4_data->pdev->dev.parent,
+					"%s: Failed to do force update\n",
+					__func__);
+			return retval;
+		}
+
+		retval = test_do_command(COMMAND_FORCE_CAL);
+		if (retval < 0) {
+			dev_err(rmi4_data->pdev->dev.parent,
+					"%s: Failed to do force cal\n",
+					__func__);
+			return retval;
+		}
+	}
+
 	return 0;
-
-switch (f54->report_type) {
-case F54_16BIT_IMAGE:
-case F54_RAW_16BIT_IMAGE:
-case F54_SENSOR_SPEED:
-case F54_ADC_RANGE:
-case F54_ABS_RAW_CAP:
-case F54_ABS_DELTA_CAP:
-case F54_ABS_HYBRID_DELTA_CAP:
-case F54_ABS_HYBRID_RAW_CAP:
-/* tddi f54 test reporting + */
-case F54_FULL_RAW_CAP_TDDI:
-case F54_NOISE_TDDI:
-case F54_EE_SHORT_TDDI:
-/* tddi f54 test reporting - */
-	break;
-case F54_AMP_RAW_ADC:
-	if (f54->query_49.has_ctrl188) {
-		retval = synaptics_rmi4_reg_read(rmi4_data,
-				f54->control.reg_188->address,
-				f54->control.reg_188->data,
-				sizeof(f54->control.reg_188->data));
-		if (retval < 0) {
-			dev_err(rmi4_data->pdev->dev.parent,
-					"%s: Failed to set start production test\n",
-					__func__);
-			return retval;
-		}
-		f54->control.reg_188->start_production_test = 1;
-		retval = synaptics_rmi4_reg_write(rmi4_data,
-				f54->control.reg_188->address,
-				f54->control.reg_188->data,
-				sizeof(f54->control.reg_188->data));
-		if (retval < 0) {
-			dev_err(rmi4_data->pdev->dev.parent,
-					"%s: Failed to set start production test\n",
-					__func__);
-			return retval;
-		}
-	}
-	break;
-default:
-	if (f54->query.touch_controller_family == 1)
-		disable_cbc(reg_7);
-	else if (f54->query.has_ctrl88)
-		disable_cbc(reg_88);
-
-	if (f54->query.has_0d_acquisition_control)
-		disable_cbc(reg_57);
-
-	if ((f54->query.has_query15) &&
-			(f54->query_15.has_query25) &&
-			(f54->query_25.has_query27) &&
-			(f54->query_27.has_query29) &&
-			(f54->query_29.has_query30) &&
-			(f54->query_30.has_query32) &&
-			(f54->query_32.has_query33) &&
-			(f54->query_33.has_query36) &&
-			(f54->query_36.has_query38) &&
-			(f54->query_38.has_ctrl149)) {
-		retval = synaptics_rmi4_reg_write(rmi4_data,
-				f54->control.reg_149->address,
-				&zero,
-				sizeof(f54->control.reg_149->data));
-		if (retval < 0) {
-			dev_err(rmi4_data->pdev->dev.parent,
-					"%s: Failed to disable global CBC\n",
-					__func__);
-			return retval;
-		}
-	}
-
-	if (f54->query.has_signal_clarity) {
-		retval = synaptics_rmi4_reg_read(rmi4_data,
-				f54->control.reg_41->address,
-				&value,
-				sizeof(f54->control.reg_41->data));
-		if (retval < 0) {
-			dev_err(rmi4_data->pdev->dev.parent,
-					"%s: Failed to disable signal clarity\n",
-					__func__);
-			return retval;
-		}
-		value |= 0x01;
-		retval = synaptics_rmi4_reg_write(rmi4_data,
-				f54->control.reg_41->address,
-				&value,
-				sizeof(f54->control.reg_41->data));
-		if (retval < 0) {
-			dev_err(rmi4_data->pdev->dev.parent,
-					"%s: Failed to disable signal clarity\n",
-					__func__);
-			return retval;
-		}
-	}
-
-	retval = test_do_command(COMMAND_FORCE_UPDATE);
-	if (retval < 0) {
-		dev_err(rmi4_data->pdev->dev.parent,
-				"%s: Failed to do force update\n",
-				__func__);
-		return retval;
-	}
-
-	retval = test_do_command(COMMAND_FORCE_CAL);
-	if (retval < 0) {
-		dev_err(rmi4_data->pdev->dev.parent,
-				"%s: Failed to do force cal\n",
-				__func__);
-		return retval;
-	}
-}
-
-return 0;
 }
 
 static int test_do_afe_calibration(enum f54_afe_cal mode)
 {
-int retval;
-unsigned char timeout = CALIBRATION_TIMEOUT_S;
-unsigned char timeout_count = 0;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char timeout = CALIBRATION_TIMEOUT_S;
+	unsigned char timeout_count = 0;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = synaptics_rmi4_reg_read(rmi4_data,
-		f54->control.reg_188->address,
-		f54->control.reg_188->data,
-		sizeof(f54->control.reg_188->data));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to start calibration\n",
-			__func__);
-	return retval;
-}
-
-if (mode == F54_AFE_CAL)
-	f54->control.reg_188->start_calibration = 1;
-else if (mode == F54_AFE_IS_CAL)
-	f54->control.reg_188->start_is_calibration = 1;
-
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		f54->control.reg_188->address,
-		f54->control.reg_188->data,
-		sizeof(f54->control.reg_188->data));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to start calibration\n",
-			__func__);
-	return retval;
-}
-
-do {
 	retval = synaptics_rmi4_reg_read(rmi4_data,
 			f54->control.reg_188->address,
 			f54->control.reg_188->data,
 			sizeof(f54->control.reg_188->data));
 	if (retval < 0) {
 		dev_err(rmi4_data->pdev->dev.parent,
-				"%s: Failed to complete calibration\n",
+				"%s: Failed to start calibration\n",
 				__func__);
 		return retval;
 	}
 
-	if (mode == F54_AFE_CAL) {
-		if (!f54->control.reg_188->start_calibration)
-			break;
-	} else if (mode == F54_AFE_IS_CAL) {
-		if (!f54->control.reg_188->start_is_calibration)
-			break;
-	}
+	if (mode == F54_AFE_CAL)
+		f54->control.reg_188->start_calibration = 1;
+	else if (mode == F54_AFE_IS_CAL)
+		f54->control.reg_188->start_is_calibration = 1;
 
-	if (timeout_count == timeout) {
-		dev_err(rmi4_data->pdev->dev.parent,
-				"%s: Timed out waiting for calibration completion\n",
-				__func__);
-		return -EBUSY;
-	}
-
-	timeout_count++;
-	msleep(1000);
-} while (true);
-
-/* check CRC */
-retval = synaptics_rmi4_reg_read(rmi4_data,
-		f54->data_31.address,
-		f54->data_31.data,
-		sizeof(f54->data_31.data));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to read calibration CRC\n",
-			__func__);
-	return retval;
-}
-
-if (mode == F54_AFE_CAL) {
-	if (f54->data_31.calibration_crc == 0)
-		return 0;
-} else if (mode == F54_AFE_IS_CAL) {
-	if (f54->data_31.is_calibration_crc == 0)
-		return 0;
-}
-
-dev_err(rmi4_data->pdev->dev.parent,
-		"%s: Failed to read calibration CRC\n",
-		__func__);
-
-return -EINVAL;
-}
-
-static int test_check_for_idle_status(void)
-{
-int retval;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
-
-switch (f54->status) {
-case STATUS_IDLE:
-	retval = 0;
-	break;
-case STATUS_BUSY:
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Status busy\n",
-			__func__);
-	retval = -EINVAL;
-	break;
-case STATUS_ERROR:
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Status error\n",
-			__func__);
-	retval = -EINVAL;
-	break;
-default:
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Invalid status (%d)\n",
-			__func__, f54->status);
-	retval = -EINVAL;
-}
-
-return retval;
-}
-
-static void test_timeout_work(struct work_struct *work)
-{
-int retval;
-unsigned char command;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
-
-mutex_lock(&f54->status_mutex);
-
-if (f54->status == STATUS_BUSY) {
-	retval = synaptics_rmi4_reg_read(rmi4_data,
-			f54->command_base_addr,
-			&command,
-			sizeof(command));
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			f54->control.reg_188->address,
+			f54->control.reg_188->data,
+			sizeof(f54->control.reg_188->data));
 	if (retval < 0) {
 		dev_err(rmi4_data->pdev->dev.parent,
-				"%s: Failed to read command register\n",
+				"%s: Failed to start calibration\n",
 				__func__);
-	} else if (command & COMMAND_GET_REPORT) {
-		dev_err(rmi4_data->pdev->dev.parent,
-				"%s: Report type not supported by FW\n",
-				__func__);
-	} else {
-		queue_work(f54->test_report_workqueue,
-				&f54->test_report_work);
-		goto exit;
-	}
-	f54->status = STATUS_ERROR;
-	f54->report_size = 0;
-}
-
-exit:
-mutex_unlock(&f54->status_mutex);
-
-return;
-}
-
-static enum hrtimer_restart test_get_report_timeout(struct hrtimer *timer)
-{
-schedule_work(&(f54->timeout_work));
-
-return HRTIMER_NORESTART;
-}
-
-static ssize_t test_sysfs_num_of_mapped_tx_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-return snprintf(buf, PAGE_SIZE, "%u\n", f54->tx_assigned);
-}
-
-static ssize_t test_sysfs_num_of_mapped_rx_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-return snprintf(buf, PAGE_SIZE, "%u\n", f54->rx_assigned);
-}
-
-static ssize_t test_sysfs_tx_mapping_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-int cnt;
-int count = 0;
-unsigned char ii;
-unsigned char tx_num;
-unsigned char tx_electrodes;
-
-if (!f55)
-	return -EINVAL;
-
-tx_electrodes = f55->query.num_of_tx_electrodes;
-
-for (ii = 0; ii < tx_electrodes; ii++) {
-	tx_num = f55->tx_assignment[ii];
-	if (tx_num == 0xff)
-		cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
-	else
-		cnt = snprintf(buf, PAGE_SIZE - count, "%02u ", tx_num);
-	buf += cnt;
-	count += cnt;
-}
-
-snprintf(buf, PAGE_SIZE - count, "\n");
-count++;
-
-return count;
-}
-
-static ssize_t test_sysfs_rx_mapping_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-int cnt;
-int count = 0;
-unsigned char ii;
-unsigned char rx_num;
-unsigned char rx_electrodes;
-
-if (!f55)
-	return -EINVAL;
-
-rx_electrodes = f55->query.num_of_rx_electrodes;
-
-for (ii = 0; ii < rx_electrodes; ii++) {
-	rx_num = f55->rx_assignment[ii];
-	if (rx_num == 0xff)
-		cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
-	else
-		cnt = snprintf(buf, PAGE_SIZE - count, "%02u ", rx_num);
-	buf += cnt;
-	count += cnt;
-}
-
-snprintf(buf, PAGE_SIZE - count, "\n");
-count++;
-
-return count;
-}
-
-static ssize_t test_sysfs_num_of_mapped_force_tx_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-return snprintf(buf, PAGE_SIZE, "%u\n", f21->tx_assigned);
-}
-
-static ssize_t test_sysfs_num_of_mapped_force_rx_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-return snprintf(buf, PAGE_SIZE, "%u\n", f21->rx_assigned);
-}
-
-static ssize_t test_sysfs_force_tx_mapping_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-int cnt;
-int count = 0;
-unsigned char ii;
-unsigned char tx_num;
-unsigned char tx_electrodes;
-
-if ((!f55 || !f55->has_force) && (!f21 || !f21->has_force))
-	return -EINVAL;
-
-if (f55->has_force) {
-	tx_electrodes = f55->query.num_of_tx_electrodes;
-
-	for (ii = 0; ii < tx_electrodes; ii++) {
-		tx_num = f55->force_tx_assignment[ii];
-		if (tx_num == 0xff) {
-			cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
-		} else {
-			cnt = snprintf(buf, PAGE_SIZE - count, "%02u ",
-					tx_num);
-		}
-		buf += cnt;
-		count += cnt;
-	}
-} else if (f21->has_force) {
-	tx_electrodes = f21->max_num_of_tx;
-
-	for (ii = 0; ii < tx_electrodes; ii++) {
-		tx_num = f21->force_txrx_assignment[ii];
-		if (tx_num == 0xff) {
-			cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
-		} else {
-			cnt = snprintf(buf, PAGE_SIZE - count, "%02u ",
-					tx_num);
-		}
-		buf += cnt;
-		count += cnt;
-	}
-}
-
-snprintf(buf, PAGE_SIZE - count, "\n");
-count++;
-
-return count;
-}
-
-static ssize_t test_sysfs_force_rx_mapping_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-int cnt;
-int count = 0;
-unsigned char ii;
-unsigned char offset;
-unsigned char rx_num;
-unsigned char rx_electrodes;
-
-if ((!f55 || !f55->has_force) && (!f21 || !f21->has_force))
-	return -EINVAL;
-
-if (f55->has_force) {
-	rx_electrodes = f55->query.num_of_rx_electrodes;
-
-	for (ii = 0; ii < rx_electrodes; ii++) {
-		rx_num = f55->force_rx_assignment[ii];
-		if (rx_num == 0xff)
-			cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
-		else
-			cnt = snprintf(buf, PAGE_SIZE - count, "%02u ",
-					rx_num);
-		buf += cnt;
-		count += cnt;
-	}
-} else if (f21->has_force) {
-	offset = f21->max_num_of_tx;
-	rx_electrodes = f21->max_num_of_rx;
-
-	for (ii = offset; ii < (rx_electrodes + offset); ii++) {
-		rx_num = f21->force_txrx_assignment[ii];
-		if (rx_num == 0xff)
-			cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
-		else
-			cnt = snprintf(buf, PAGE_SIZE - count, "%02u ",
-					rx_num);
-		buf += cnt;
-		count += cnt;
-	}
-}
-
-snprintf(buf, PAGE_SIZE - count, "\n");
-count++;
-
-return count;
-}
-
-static ssize_t test_sysfs_report_size_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-return snprintf(buf, PAGE_SIZE, "%u\n", f54->report_size);
-}
-
-static ssize_t test_sysfs_status_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
-int retval;
-
-mutex_lock(&f54->status_mutex);
-
-retval = snprintf(buf, PAGE_SIZE, "%u\n", f54->status);
-
-mutex_unlock(&f54->status_mutex);
-
-return retval;
-}
-
-static ssize_t test_sysfs_do_preparation_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
-{
-int retval;
-unsigned long setting;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
-
-retval = sstrtoul(buf, 10, &setting);
-if (retval)
-	return retval;
-
-if (setting != 1)
-	return -EINVAL;
-
-mutex_lock(&f54->status_mutex);
-
-retval = test_check_for_idle_status();
-if (retval < 0)
-	goto exit;
-
-retval = test_do_preparation();
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to do preparation\n",
-			__func__);
-	goto exit;
-}
-
-retval = count;
-
-exit:
-mutex_unlock(&f54->status_mutex);
-
-return retval;
-}
-
-static ssize_t test_sysfs_force_cal_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
-{
-int retval;
-unsigned long setting;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
-
-retval = sstrtoul(buf, 10, &setting);
-if (retval)
-	return retval;
-
-if (setting != 1)
-	return -EINVAL;
-
-mutex_lock(&f54->status_mutex);
-
-retval = test_check_for_idle_status();
-if (retval < 0)
-	goto exit;
-
-retval = test_do_command(COMMAND_FORCE_CAL);
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to do force cal\n",
-			__func__);
-	goto exit;
-}
-
-retval = count;
-
-exit:
-mutex_unlock(&f54->status_mutex);
-
-return retval;
-}
-
-/* tddi f54 test reporting + */
-#ifdef F54_POLLING_GET_REPORT
-static ssize_t test_sysfs_get_report_polling(void)
-{
-int retval = 0;
-unsigned char report_index[2];
-unsigned int byte_delay_us;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
-
-retval = test_wait_for_command_completion();
-if (retval < 0) {
-	retval = -EIO;
-	f54->status = STATUS_ERROR;
-	return retval;
-}
-
-test_set_report_size();
-if (f54->report_size == 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Report data size = 0\n", __func__);
-	retval = -EIO;
-	f54->status = STATUS_ERROR;
-	return retval;
-}
-
-if (f54->data_buffer_size < f54->report_size) {
-	if (f54->data_buffer_size)
-		kfree(f54->report_data);
-	f54->report_data = kzalloc(f54->report_size, GFP_KERNEL);
-	if (!f54->report_data) {
-		dev_err(rmi4_data->pdev->dev.parent,
-				"%s: Failed to alloc mem for data buffer\n", __func__);
-		f54->data_buffer_size = 0;
-		retval = -EIO;
-		f54->status = STATUS_ERROR;
 		return retval;
 	}
-	f54->data_buffer_size = f54->report_size;
-}
 
-report_index[0] = 0;
-report_index[1] = 0;
-
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		f54->data_base_addr + REPORT_INDEX_OFFSET,
-		report_index,
-		sizeof(report_index));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to write report data index\n", __func__);
-	retval = -EIO;
-	f54->status = STATUS_ERROR;
-	return retval;
-}
-
-if ((rmi4_data->hw_if->bus_access->type == BUS_SPI) && f54->burst_read && f54->is_burst) {
-	byte_delay_us = rmi4_data->hw_if->board_data->byte_delay_us;
-	rmi4_data->hw_if->board_data->byte_delay_us = 0;
-}
-
-retval = synaptics_rmi4_reg_read(rmi4_data,
-		f54->data_base_addr + REPORT_DATA_OFFSET,
-		f54->report_data,
-		f54->report_size);
-
-if ((rmi4_data->hw_if->bus_access->type == BUS_SPI) && f54->burst_read && f54->is_burst)
-	rmi4_data->hw_if->board_data->byte_delay_us = byte_delay_us;
-
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to read report data\n",
-			__func__);
-	retval = -EIO;
-	f54->status = STATUS_ERROR;
-	return retval;
-}
-
-f54->status = STATUS_IDLE;
-return retval;
-}
-#endif
-/* tddi f54 test reporting - */
-
-static ssize_t test_sysfs_get_report_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
-{
-int retval;
-unsigned char command;
-unsigned long setting;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
-
-retval = sstrtoul(buf, 10, &setting);
-if (retval)
-	return retval;
-
-if (setting != 1)
-	return -EINVAL;
-
-mutex_lock(&f54->status_mutex);
-
-retval = test_check_for_idle_status();
-if (retval < 0)
-	goto exit;
-
-if (!test_report_type_valid(f54->report_type)) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Invalid report type\n",
-			__func__);
-	retval = -EINVAL;
-	goto exit;
-}
-
-test_set_interrupt(true);
-
-command = (unsigned char)COMMAND_GET_REPORT;
-
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		f54->command_base_addr,
-		&command,
-		sizeof(command));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to write get report command\n",
-			__func__);
-	goto exit;
-}
-
-/* tddi f54 test reporting + */
-#ifdef F54_POLLING_GET_REPORT
-
-retval = test_sysfs_get_report_polling();
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to get report image\n",
-			__func__);
-	goto exit;
-}
-
-#else
-/* tddi f54 test reporting - */
-
-f54->status = STATUS_BUSY;
-f54->report_size = 0;
-f54->data_pos = 0;
-
-hrtimer_start(&f54->watchdog,
-		ktime_set(GET_REPORT_TIMEOUT_S, 0),
-		HRTIMER_MODE_REL);
-
-retval = count;
-
-#endif
-
-exit:
-mutex_unlock(&f54->status_mutex);
-
-return retval;
-}
-
-static ssize_t test_sysfs_resume_touch_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
-{
-int retval;
-unsigned char device_ctrl;
-unsigned long setting;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
-
-retval = sstrtoul(buf, 10, &setting);
-if (retval)
-	return retval;
-
-if (setting != 1)
-	return -EINVAL;
-
-retval = synaptics_rmi4_reg_read(rmi4_data,
-		rmi4_data->f01_ctrl_base_addr,
-		&device_ctrl,
-		sizeof(device_ctrl));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to restore no sleep setting\n",
-			__func__);
-	return retval;
-}
-
-device_ctrl = device_ctrl & ~NO_SLEEP_ON;
-device_ctrl |= rmi4_data->no_sleep_setting;
-
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		rmi4_data->f01_ctrl_base_addr,
-		&device_ctrl,
-		sizeof(device_ctrl));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to restore no sleep setting\n",
-			__func__);
-	return retval;
-}
-
-test_set_interrupt(false);
-
-if (f54->skip_preparation)
-	return count;
-
-switch (f54->report_type) {
-case F54_16BIT_IMAGE:
-case F54_RAW_16BIT_IMAGE:
-case F54_SENSOR_SPEED:
-case F54_ADC_RANGE:
-case F54_ABS_RAW_CAP:
-case F54_ABS_DELTA_CAP:
-case F54_ABS_HYBRID_DELTA_CAP:
-case F54_ABS_HYBRID_RAW_CAP:
-case F54_FULL_RAW_CAP_TDDI:
-/* tddi f54 test reporting + */
-case F54_NOISE_TDDI:
-case F54_EE_SHORT_TDDI:
-/* tddi f54 test reporting - */
-	break;
-case F54_AMP_RAW_ADC:
-	if (f54->query_49.has_ctrl188) {
+	do {
 		retval = synaptics_rmi4_reg_read(rmi4_data,
 				f54->control.reg_188->address,
 				f54->control.reg_188->data,
 				sizeof(f54->control.reg_188->data));
 		if (retval < 0) {
 			dev_err(rmi4_data->pdev->dev.parent,
-					"%s: Failed to set start production test\n",
+					"%s: Failed to complete calibration\n",
 					__func__);
 			return retval;
 		}
-		f54->control.reg_188->start_production_test = 0;
-		retval = synaptics_rmi4_reg_write(rmi4_data,
-				f54->control.reg_188->address,
-				f54->control.reg_188->data,
-				sizeof(f54->control.reg_188->data));
+
+		if (mode == F54_AFE_CAL) {
+			if (!f54->control.reg_188->start_calibration)
+				break;
+		} else if (mode == F54_AFE_IS_CAL) {
+			if (!f54->control.reg_188->start_is_calibration)
+				break;
+		}
+
+		if (timeout_count == timeout) {
+			dev_err(rmi4_data->pdev->dev.parent,
+					"%s: Timed out waiting for calibration completion\n",
+					__func__);
+			return -EBUSY;
+		}
+
+		timeout_count++;
+		msleep(1000);
+	} while (true);
+
+	/* check CRC */
+	retval = synaptics_rmi4_reg_read(rmi4_data,
+			f54->data_31.address,
+			f54->data_31.data,
+			sizeof(f54->data_31.data));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to read calibration CRC\n",
+				__func__);
+		return retval;
+	}
+
+	if (mode == F54_AFE_CAL) {
+		if (f54->data_31.calibration_crc == 0)
+			return 0;
+	} else if (mode == F54_AFE_IS_CAL) {
+		if (f54->data_31.is_calibration_crc == 0)
+			return 0;
+	}
+
+	dev_err(rmi4_data->pdev->dev.parent,
+			"%s: Failed to read calibration CRC\n",
+			__func__);
+
+	return -EINVAL;
+}
+
+static int test_check_for_idle_status(void)
+{
+	int retval;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+
+	switch (f54->status) {
+	case STATUS_IDLE:
+		retval = 0;
+		break;
+	case STATUS_BUSY:
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Status busy\n",
+				__func__);
+		retval = -EINVAL;
+		break;
+	case STATUS_ERROR:
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Status error\n",
+				__func__);
+		retval = -EINVAL;
+		break;
+	default:
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Invalid status (%d)\n",
+				__func__, f54->status);
+		retval = -EINVAL;
+	}
+
+	return retval;
+}
+
+static void test_timeout_work(struct work_struct *work)
+{
+	int retval;
+	unsigned char command;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+
+	mutex_lock(&f54->status_mutex);
+
+	if (f54->status == STATUS_BUSY) {
+		retval = synaptics_rmi4_reg_read(rmi4_data,
+				f54->command_base_addr,
+				&command,
+				sizeof(command));
 		if (retval < 0) {
 			dev_err(rmi4_data->pdev->dev.parent,
-					"%s: Failed to set start production test\n",
+					"%s: Failed to read command register\n",
 					__func__);
-			return retval;
+		} else if (command & COMMAND_GET_REPORT) {
+			dev_err(rmi4_data->pdev->dev.parent,
+					"%s: Report type not supported by FW\n",
+					__func__);
+		} else {
+			queue_work(f54->test_report_workqueue,
+					&f54->test_report_work);
+			goto exit;
 		}
+		f54->status = STATUS_ERROR;
+		f54->report_size = 0;
 	}
-	break;
-default:
-	rmi4_data->reset_device(rmi4_data, false);
+
+exit:
+	mutex_unlock(&f54->status_mutex);
+
+	return;
 }
 
-return count;
-}
-
-static ssize_t test_sysfs_do_afe_calibration_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
+static enum hrtimer_restart test_get_report_timeout(struct hrtimer *timer)
 {
-int retval;
-unsigned long setting;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	schedule_work(&(f54->timeout_work));
 
-retval = sstrtoul(buf, 10, &setting);
-if (retval)
-	return retval;
-
-if (!f54->query_49.has_ctrl188) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: F54_ANALOG_Ctrl188 not found\n",
-			__func__);
-	return -EINVAL;
+	return HRTIMER_NORESTART;
 }
 
-if (setting == 0 || setting == 1)
-	retval = test_do_afe_calibration((enum f54_afe_cal)setting);
-else
-	return -EINVAL;
+static ssize_t test_sysfs_num_of_mapped_tx_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%u\n", f54->tx_assigned);
+}
 
-if (retval)
-	return retval;
-else
+static ssize_t test_sysfs_num_of_mapped_rx_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%u\n", f54->rx_assigned);
+}
+
+static ssize_t test_sysfs_tx_mapping_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	int cnt;
+	int count = 0;
+	unsigned char ii;
+	unsigned char tx_num;
+	unsigned char tx_electrodes;
+
+	if (!f55)
+		return -EINVAL;
+
+	tx_electrodes = f55->query.num_of_tx_electrodes;
+
+	for (ii = 0; ii < tx_electrodes; ii++) {
+		tx_num = f55->tx_assignment[ii];
+		if (tx_num == 0xff)
+			cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
+		else
+			cnt = snprintf(buf, PAGE_SIZE - count, "%02u ", tx_num);
+		buf += cnt;
+		count += cnt;
+	}
+
+	snprintf(buf, PAGE_SIZE - count, "\n");
+	count++;
+
 	return count;
 }
 
-static ssize_t test_sysfs_report_type_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+static ssize_t test_sysfs_rx_mapping_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
 {
-return snprintf(buf, PAGE_SIZE, "%u\n", f54->report_type);
+	int cnt;
+	int count = 0;
+	unsigned char ii;
+	unsigned char rx_num;
+	unsigned char rx_electrodes;
+
+	if (!f55)
+		return -EINVAL;
+
+	rx_electrodes = f55->query.num_of_rx_electrodes;
+
+	for (ii = 0; ii < rx_electrodes; ii++) {
+		rx_num = f55->rx_assignment[ii];
+		if (rx_num == 0xff)
+			cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
+		else
+			cnt = snprintf(buf, PAGE_SIZE - count, "%02u ", rx_num);
+		buf += cnt;
+		count += cnt;
+	}
+
+	snprintf(buf, PAGE_SIZE - count, "\n");
+	count++;
+
+	return count;
+}
+
+static ssize_t test_sysfs_num_of_mapped_force_tx_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%u\n", f21->tx_assigned);
+}
+
+static ssize_t test_sysfs_num_of_mapped_force_rx_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%u\n", f21->rx_assigned);
+}
+
+static ssize_t test_sysfs_force_tx_mapping_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	int cnt;
+	int count = 0;
+	unsigned char ii;
+	unsigned char tx_num;
+	unsigned char tx_electrodes;
+
+	if ((!f55 || !f55->has_force) && (!f21 || !f21->has_force))
+		return -EINVAL;
+
+	if (f55->has_force) {
+		tx_electrodes = f55->query.num_of_tx_electrodes;
+
+		for (ii = 0; ii < tx_electrodes; ii++) {
+			tx_num = f55->force_tx_assignment[ii];
+			if (tx_num == 0xff) {
+				cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
+			} else {
+				cnt = snprintf(buf, PAGE_SIZE - count, "%02u ",
+						tx_num);
+			}
+			buf += cnt;
+			count += cnt;
+		}
+	} else if (f21->has_force) {
+		tx_electrodes = f21->max_num_of_tx;
+
+		for (ii = 0; ii < tx_electrodes; ii++) {
+			tx_num = f21->force_txrx_assignment[ii];
+			if (tx_num == 0xff) {
+				cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
+			} else {
+				cnt = snprintf(buf, PAGE_SIZE - count, "%02u ",
+						tx_num);
+			}
+			buf += cnt;
+			count += cnt;
+		}
+	}
+
+	snprintf(buf, PAGE_SIZE - count, "\n");
+	count++;
+
+	return count;
+}
+
+static ssize_t test_sysfs_force_rx_mapping_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	int cnt;
+	int count = 0;
+	unsigned char ii;
+	unsigned char offset;
+	unsigned char rx_num;
+	unsigned char rx_electrodes;
+
+	if ((!f55 || !f55->has_force) && (!f21 || !f21->has_force))
+		return -EINVAL;
+
+	if (f55->has_force) {
+		rx_electrodes = f55->query.num_of_rx_electrodes;
+
+		for (ii = 0; ii < rx_electrodes; ii++) {
+			rx_num = f55->force_rx_assignment[ii];
+			if (rx_num == 0xff)
+				cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
+			else
+				cnt = snprintf(buf, PAGE_SIZE - count, "%02u ",
+						rx_num);
+			buf += cnt;
+			count += cnt;
+		}
+	} else if (f21->has_force) {
+		offset = f21->max_num_of_tx;
+		rx_electrodes = f21->max_num_of_rx;
+
+		for (ii = offset; ii < (rx_electrodes + offset); ii++) {
+			rx_num = f21->force_txrx_assignment[ii];
+			if (rx_num == 0xff)
+				cnt = snprintf(buf, PAGE_SIZE - count, "xx ");
+			else
+				cnt = snprintf(buf, PAGE_SIZE - count, "%02u ",
+						rx_num);
+			buf += cnt;
+			count += cnt;
+		}
+	}
+
+	snprintf(buf, PAGE_SIZE - count, "\n");
+	count++;
+
+	return count;
+}
+
+static ssize_t test_sysfs_report_size_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%u\n", f54->report_size);
+}
+
+static ssize_t test_sysfs_status_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	int retval;
+
+	mutex_lock(&f54->status_mutex);
+
+	retval = snprintf(buf, PAGE_SIZE, "%u\n", f54->status);
+
+	mutex_unlock(&f54->status_mutex);
+
+	return retval;
+}
+
+static ssize_t test_sysfs_do_preparation_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	int retval;
+	unsigned long setting;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+
+	retval = sstrtoul(buf, 10, &setting);
+	if (retval)
+		return retval;
+
+	if (setting != 1)
+		return -EINVAL;
+
+	mutex_lock(&f54->status_mutex);
+
+	retval = test_check_for_idle_status();
+	if (retval < 0)
+		goto exit;
+
+	retval = test_do_preparation();
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to do preparation\n",
+				__func__);
+		goto exit;
+	}
+
+	retval = count;
+
+exit:
+	mutex_unlock(&f54->status_mutex);
+
+	return retval;
+}
+
+static ssize_t test_sysfs_force_cal_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	int retval;
+	unsigned long setting;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+
+	retval = sstrtoul(buf, 10, &setting);
+	if (retval)
+		return retval;
+
+	if (setting != 1)
+		return -EINVAL;
+
+	mutex_lock(&f54->status_mutex);
+
+	retval = test_check_for_idle_status();
+	if (retval < 0)
+		goto exit;
+
+	retval = test_do_command(COMMAND_FORCE_CAL);
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to do force cal\n",
+				__func__);
+		goto exit;
+	}
+
+	retval = count;
+
+exit:
+	mutex_unlock(&f54->status_mutex);
+
+	return retval;
+}
+
+/* tddi f54 test reporting + */
+#ifdef F54_POLLING_GET_REPORT
+static ssize_t test_sysfs_get_report_polling(void)
+{
+	int retval = 0;
+	unsigned char report_index[2];
+	unsigned int byte_delay_us;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+
+	retval = test_wait_for_command_completion();
+	if (retval < 0) {
+		retval = -EIO;
+		f54->status = STATUS_ERROR;
+		return retval;
+	}
+
+	test_set_report_size();
+	if (f54->report_size == 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Report data size = 0\n", __func__);
+		retval = -EIO;
+		f54->status = STATUS_ERROR;
+		return retval;
+	}
+
+	if (f54->data_buffer_size < f54->report_size) {
+		if (f54->data_buffer_size)
+			kfree(f54->report_data);
+		f54->report_data = kzalloc(f54->report_size, GFP_KERNEL);
+		if (!f54->report_data) {
+			dev_err(rmi4_data->pdev->dev.parent,
+					"%s: Failed to alloc mem for data buffer\n", __func__);
+			f54->data_buffer_size = 0;
+			retval = -EIO;
+			f54->status = STATUS_ERROR;
+			return retval;
+		}
+		f54->data_buffer_size = f54->report_size;
+	}
+
+	report_index[0] = 0;
+	report_index[1] = 0;
+
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			f54->data_base_addr + REPORT_INDEX_OFFSET,
+			report_index,
+			sizeof(report_index));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to write report data index\n", __func__);
+		retval = -EIO;
+		f54->status = STATUS_ERROR;
+		return retval;
+	}
+
+	if ((rmi4_data->hw_if->bus_access->type == BUS_SPI) && f54->burst_read && f54->is_burst) {
+		byte_delay_us = rmi4_data->hw_if->board_data->byte_delay_us;
+		rmi4_data->hw_if->board_data->byte_delay_us = 0;
+	}
+
+	retval = synaptics_rmi4_reg_read(rmi4_data,
+			f54->data_base_addr + REPORT_DATA_OFFSET,
+			f54->report_data,
+			f54->report_size);
+
+	if ((rmi4_data->hw_if->bus_access->type == BUS_SPI) && f54->burst_read && f54->is_burst)
+		rmi4_data->hw_if->board_data->byte_delay_us = byte_delay_us;
+
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to read report data\n",
+				__func__);
+		retval = -EIO;
+		f54->status = STATUS_ERROR;
+		return retval;
+	}
+
+	f54->status = STATUS_IDLE;
+	return retval;
+}
+#endif
+/* tddi f54 test reporting - */
+
+static ssize_t test_sysfs_get_report_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	int retval;
+	unsigned char command;
+	unsigned long setting;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+
+	retval = sstrtoul(buf, 10, &setting);
+	if (retval)
+		return retval;
+
+	if (setting != 1)
+		return -EINVAL;
+
+	mutex_lock(&f54->status_mutex);
+
+	retval = test_check_for_idle_status();
+	if (retval < 0)
+		goto exit;
+
+	if (!test_report_type_valid(f54->report_type)) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Invalid report type\n",
+				__func__);
+		retval = -EINVAL;
+		goto exit;
+	}
+
+	test_set_interrupt(true);
+
+	command = (unsigned char)COMMAND_GET_REPORT;
+
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			f54->command_base_addr,
+			&command,
+			sizeof(command));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to write get report command\n",
+				__func__);
+		goto exit;
+	}
+
+/* tddi f54 test reporting + */
+#ifdef F54_POLLING_GET_REPORT
+
+	retval = test_sysfs_get_report_polling();
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to get report image\n",
+				__func__);
+		goto exit;
+	}
+
+#else
+/* tddi f54 test reporting - */
+
+	f54->status = STATUS_BUSY;
+	f54->report_size = 0;
+	f54->data_pos = 0;
+
+	hrtimer_start(&f54->watchdog,
+			ktime_set(GET_REPORT_TIMEOUT_S, 0),
+			HRTIMER_MODE_REL);
+
+	retval = count;
+
+#endif
+
+exit:
+	mutex_unlock(&f54->status_mutex);
+
+	return retval;
+}
+
+static ssize_t test_sysfs_resume_touch_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	int retval;
+	unsigned char device_ctrl;
+	unsigned long setting;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+
+	retval = sstrtoul(buf, 10, &setting);
+	if (retval)
+		return retval;
+
+	if (setting != 1)
+		return -EINVAL;
+
+	retval = synaptics_rmi4_reg_read(rmi4_data,
+			rmi4_data->f01_ctrl_base_addr,
+			&device_ctrl,
+			sizeof(device_ctrl));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to restore no sleep setting\n",
+				__func__);
+		return retval;
+	}
+
+	device_ctrl = device_ctrl & ~NO_SLEEP_ON;
+	device_ctrl |= rmi4_data->no_sleep_setting;
+
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			rmi4_data->f01_ctrl_base_addr,
+			&device_ctrl,
+			sizeof(device_ctrl));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to restore no sleep setting\n",
+				__func__);
+		return retval;
+	}
+
+	test_set_interrupt(false);
+
+	if (f54->skip_preparation)
+		return count;
+
+	switch (f54->report_type) {
+	case F54_16BIT_IMAGE:
+	case F54_RAW_16BIT_IMAGE:
+	case F54_SENSOR_SPEED:
+	case F54_ADC_RANGE:
+	case F54_ABS_RAW_CAP:
+	case F54_ABS_DELTA_CAP:
+	case F54_ABS_HYBRID_DELTA_CAP:
+	case F54_ABS_HYBRID_RAW_CAP:
+	case F54_FULL_RAW_CAP_TDDI:
+	/* tddi f54 test reporting + */
+	case F54_NOISE_TDDI:
+	case F54_EE_SHORT_TDDI:
+	/* tddi f54 test reporting - */
+		break;
+	case F54_AMP_RAW_ADC:
+		if (f54->query_49.has_ctrl188) {
+			retval = synaptics_rmi4_reg_read(rmi4_data,
+					f54->control.reg_188->address,
+					f54->control.reg_188->data,
+					sizeof(f54->control.reg_188->data));
+			if (retval < 0) {
+				dev_err(rmi4_data->pdev->dev.parent,
+						"%s: Failed to set start production test\n",
+						__func__);
+				return retval;
+			}
+			f54->control.reg_188->start_production_test = 0;
+			retval = synaptics_rmi4_reg_write(rmi4_data,
+					f54->control.reg_188->address,
+					f54->control.reg_188->data,
+					sizeof(f54->control.reg_188->data));
+			if (retval < 0) {
+				dev_err(rmi4_data->pdev->dev.parent,
+						"%s: Failed to set start production test\n",
+						__func__);
+				return retval;
+			}
+		}
+		break;
+	default:
+		rmi4_data->reset_device(rmi4_data, false);
+	}
+
+	return count;
+}
+
+static ssize_t test_sysfs_do_afe_calibration_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	int retval;
+	unsigned long setting;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+
+	retval = sstrtoul(buf, 10, &setting);
+	if (retval)
+		return retval;
+
+	if (!f54->query_49.has_ctrl188) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: F54_ANALOG_Ctrl188 not found\n",
+				__func__);
+		return -EINVAL;
+	}
+
+	if (setting == 0 || setting == 1)
+		retval = test_do_afe_calibration((enum f54_afe_cal)setting);
+	else
+		return -EINVAL;
+
+	if (retval)
+		return retval;
+	else
+		return count;
+}
+
+static ssize_t test_sysfs_report_type_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%u\n", f54->report_type);
 }
 
 static ssize_t test_sysfs_report_type_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
+		struct device_attribute *attr, const char *buf, size_t count)
 {
-int retval;
-unsigned char data;
-unsigned long setting;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char data;
+	unsigned long setting;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = sstrtoul(buf, 10, &setting);
-if (retval)
-	return retval;
+	retval = sstrtoul(buf, 10, &setting);
+	if (retval)
+		return retval;
 
-mutex_lock(&f54->status_mutex);
+	mutex_lock(&f54->status_mutex);
 
-retval = test_check_for_idle_status();
-if (retval < 0)
-	goto exit;
+	retval = test_check_for_idle_status();
+	if (retval < 0)
+		goto exit;
 
-if (!test_report_type_valid((enum f54_report_types)setting)) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Report type not supported by driver\n",
-			__func__);
-	retval = -EINVAL;
-	goto exit;
-}
+	if (!test_report_type_valid((enum f54_report_types)setting)) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Report type not supported by driver\n",
+				__func__);
+		retval = -EINVAL;
+		goto exit;
+	}
 
-f54->report_type = (enum f54_report_types)setting;
-data = (unsigned char)setting;
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		f54->data_base_addr,
-		&data,
-		sizeof(data));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to write report type\n",
-			__func__);
-	goto exit;
-}
+	f54->report_type = (enum f54_report_types)setting;
+	data = (unsigned char)setting;
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			f54->data_base_addr,
+			&data,
+			sizeof(data));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to write report type\n",
+				__func__);
+		goto exit;
+	}
 
-retval = count;
+	retval = count;
 
 exit:
-mutex_unlock(&f54->status_mutex);
+	mutex_unlock(&f54->status_mutex);
 
-return retval;
+	return retval;
 }
 
 static ssize_t test_sysfs_fifoindex_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+		struct device_attribute *attr, char *buf)
 {
-int retval;
-unsigned char data[2];
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char data[2];
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = synaptics_rmi4_reg_read(rmi4_data,
-		f54->data_base_addr + REPORT_INDEX_OFFSET,
-		data,
-		sizeof(data));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to read report index\n",
-			__func__);
-	return retval;
-}
+	retval = synaptics_rmi4_reg_read(rmi4_data,
+			f54->data_base_addr + REPORT_INDEX_OFFSET,
+			data,
+			sizeof(data));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to read report index\n",
+				__func__);
+		return retval;
+	}
 
-batohs(&f54->fifoindex, data);
+	batohs(&f54->fifoindex, data);
 
-return snprintf(buf, PAGE_SIZE, "%u\n", f54->fifoindex);
+	return snprintf(buf, PAGE_SIZE, "%u\n", f54->fifoindex);
 }
 
 static ssize_t test_sysfs_fifoindex_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
+		struct device_attribute *attr, const char *buf, size_t count)
 {
-int retval;
-unsigned char data[2];
-unsigned long setting;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char data[2];
+	unsigned long setting;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = sstrtoul(buf, 10, &setting);
-if (retval)
-	return retval;
+	retval = sstrtoul(buf, 10, &setting);
+	if (retval)
+		return retval;
 
-f54->fifoindex = setting;
+	f54->fifoindex = setting;
 
-hstoba(data, (unsigned short)setting);
+	hstoba(data, (unsigned short)setting);
 
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		f54->data_base_addr + REPORT_INDEX_OFFSET,
-		data,
-		sizeof(data));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to write report index\n",
-			__func__);
-	return retval;
-}
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			f54->data_base_addr + REPORT_INDEX_OFFSET,
+			data,
+			sizeof(data));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to write report index\n",
+				__func__);
+		return retval;
+	}
 
-return count;
+	return count;
 }
 
 static ssize_t test_sysfs_no_auto_cal_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+		struct device_attribute *attr, char *buf)
 {
-return snprintf(buf, PAGE_SIZE, "%u\n", f54->no_auto_cal);
+	return snprintf(buf, PAGE_SIZE, "%u\n", f54->no_auto_cal);
 }
 
 static ssize_t test_sysfs_no_auto_cal_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
+		struct device_attribute *attr, const char *buf, size_t count)
 {
-int retval;
-unsigned char data;
-unsigned long setting;
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char data;
+	unsigned long setting;
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = sstrtoul(buf, 10, &setting);
-if (retval)
-	return retval;
+	retval = sstrtoul(buf, 10, &setting);
+	if (retval)
+		return retval;
 
-if (setting > 1)
-	return -EINVAL;
+	if (setting > 1)
+		return -EINVAL;
 
-retval = synaptics_rmi4_reg_read(rmi4_data,
-		f54->control_base_addr,
-		&data,
-		sizeof(data));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to read no auto cal setting\n",
-			__func__);
-	return retval;
+	retval = synaptics_rmi4_reg_read(rmi4_data,
+			f54->control_base_addr,
+			&data,
+			sizeof(data));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to read no auto cal setting\n",
+				__func__);
+		return retval;
+	}
+
+	if (setting)
+		data |= CONTROL_NO_AUTO_CAL;
+	else
+		data &= ~CONTROL_NO_AUTO_CAL;
+
+	retval = synaptics_rmi4_reg_write(rmi4_data,
+			f54->control_base_addr,
+			&data,
+			sizeof(data));
+	if (retval < 0) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to write no auto cal setting\n",
+				__func__);
+		return retval;
+	}
+
+	f54->no_auto_cal = (setting == 1);
+
+	return count;
 }
 
-if (setting)
-	data |= CONTROL_NO_AUTO_CAL;
-else
-	data &= ~CONTROL_NO_AUTO_CAL;
-
-retval = synaptics_rmi4_reg_write(rmi4_data,
-		f54->control_base_addr,
-		&data,
-		sizeof(data));
-if (retval < 0) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to write no auto cal setting\n",
-			__func__);
-	return retval;
-}
-
-f54->no_auto_cal = (setting == 1);
-
-return count;
-}
-
-static int check_ito_test_flag = 2;
+static int check_ito_test_flag=2;
 #ifdef SYNAPTICS_ESD_CHECK
 extern void synaptics_rmi4_esd_work(struct work_struct *work);
 #define SYNAPTICS_ESD_CHECK_CIRCLE 2*HZ
 extern struct synaptics_rmi4_data *rmi4_data;
 #endif
 static ssize_t test_sysfs_read_report_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+		struct device_attribute *attr, char *buf)
 {
-unsigned int ii;
-unsigned int jj;
-int cnt;
-int count = 0;
-int tx_num = f54->tx_assigned;
-int rx_num = f54->rx_assigned;
-char *report_data_8;
-short *report_data_16;
-int *report_data_32;
-unsigned short *report_data_u16;
-unsigned int *report_data_u32;
+	unsigned int ii;
+	unsigned int jj;
+	int cnt;
+	int count = 0;
+	int tx_num = f54->tx_assigned;
+	int rx_num = f54->rx_assigned;
+	char *report_data_8;
+	short *report_data_16;
+	int *report_data_32;
+	unsigned short *report_data_u16;
+	unsigned int *report_data_u32;
 
 #ifdef SYNAPTICS_ESD_CHECK
-	printk("%s SYNAPTICS_ESD_CHECK is off\n",__func__);
-	cancel_delayed_work_sync(&(rmi4_data->esd_work));
+		printk("%s SYNAPTICS_ESD_CHECK is off\n",__func__);
+		cancel_delayed_work_sync(&(rmi4_data->esd_work));
 #endif
 
-switch (f54->report_type) {
-case F54_8BIT_IMAGE:
-	printk("F54_8BIT_IMAGE\n");
-	report_data_8 = (char *)f54->report_data;
-	for (ii = 0; ii < f54->report_size; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "%03d: %d\n",
-				ii, *report_data_8);
-		report_data_8++;
+	switch (f54->report_type) {
+	case F54_8BIT_IMAGE:
+		printk("F54_8BIT_IMAGE\n");
+		report_data_8 = (char *)f54->report_data;
+		for (ii = 0; ii < f54->report_size; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "%03d: %d\n",
+					ii, *report_data_8);
+			report_data_8++;
+			buf += cnt;
+			count += cnt;
+		}
+		break;
+	case F54_AMP_RAW_ADC:
+		report_data_u16 = (unsigned short *)f54->report_data;
+		cnt = snprintf(buf, PAGE_SIZE - count, "tx = %d\nrx = %d\n",
+				tx_num, rx_num);
 		buf += cnt;
 		count += cnt;
-	}
-	break;
-case F54_AMP_RAW_ADC:
-	report_data_u16 = (unsigned short *)f54->report_data;
-	cnt = snprintf(buf, PAGE_SIZE - count, "tx = %d\nrx = %d\n",
-			tx_num, rx_num);
-	buf += cnt;
-	count += cnt;
 
-	for (ii = 0; ii < tx_num; ii++) {
-		for (jj = 0; jj < (rx_num - 1); jj++) {
-			cnt = snprintf(buf, PAGE_SIZE - count, "%-4d ",
+		for (ii = 0; ii < tx_num; ii++) {
+			for (jj = 0; jj < (rx_num - 1); jj++) {
+				cnt = snprintf(buf, PAGE_SIZE - count, "%-4d ",
+						*report_data_u16);
+				report_data_u16++;
+				buf += cnt;
+				count += cnt;
+			}
+			cnt = snprintf(buf, PAGE_SIZE - count, "%-4d\n",
 					*report_data_u16);
 			report_data_u16++;
 			buf += cnt;
 			count += cnt;
 		}
-		cnt = snprintf(buf, PAGE_SIZE - count, "%-4d\n",
-				*report_data_u16);
-		report_data_u16++;
+		break;
+	case F54_16BIT_IMAGE:
+	case F54_RAW_16BIT_IMAGE:
+	case F54_TRUE_BASELINE:
+	case F54_FULL_RAW_CAP:
+	case F54_FULL_RAW_CAP_NO_RX_COUPLING:
+	case F54_SENSOR_SPEED:
+	case F54_AMP_FULL_RAW_CAP:
+	/* tddi f54 test reporting + */
+	case F54_NOISE_TDDI:
+	/* tddi f54 test reporting - */
+		printk("start F54_NOISE_TDDI\n");
+		report_data_16 = (short *)f54->report_data;
+		cnt = snprintf(buf, PAGE_SIZE - count, "tx = %d\nrx = %d\n\n",
+				tx_num, rx_num);
 		buf += cnt;
 		count += cnt;
-	}
-	break;
-case F54_16BIT_IMAGE:
-case F54_RAW_16BIT_IMAGE:
-case F54_TRUE_BASELINE:
-case F54_FULL_RAW_CAP:
-case F54_FULL_RAW_CAP_NO_RX_COUPLING:
-case F54_SENSOR_SPEED:
-case F54_AMP_FULL_RAW_CAP:
-/* tddi f54 test reporting + */
-case F54_NOISE_TDDI:
-/* tddi f54 test reporting - */
-	printk("start F54_NOISE_TDDI\n");
-	report_data_16 = (short *)f54->report_data;
-	cnt = snprintf(buf, PAGE_SIZE - count, "tx = %d\nrx = %d\n\n",
-			tx_num, rx_num);
-	buf += cnt;
-	count += cnt;
 
-	for (ii = 0; ii < tx_num; ii++) {
-		for (jj = 0; jj < (rx_num - 1); jj++) {
-			cnt = snprintf(buf, PAGE_SIZE - count, "%-5d ",
+		for (ii = 0; ii < tx_num; ii++) {
+			for (jj = 0; jj < (rx_num - 1); jj++) {
+				cnt = snprintf(buf, PAGE_SIZE - count, "%-5d ",
+						*report_data_16);
+				report_data_16++;
+				buf += cnt;
+				count += cnt;
+			}
+			cnt = snprintf(buf, PAGE_SIZE - count, "%-5d\n",
 					*report_data_16);
 			report_data_16++;
 			buf += cnt;
 			count += cnt;
 		}
-		cnt = snprintf(buf, PAGE_SIZE - count, "%-5d\n",
-				*report_data_16);
-		report_data_16++;
+		break;
+	/* tddi f54 test reporting + */
+	case F54_FULL_RAW_CAP_TDDI:
+		printk("start F54_FULL_RAW_CAP_TDDI\n");
+		report_data_u16 = (unsigned short *)f54->report_data;
+		cnt = snprintf(buf, PAGE_SIZE - count, "tx = %d\nrx = %d\n\n",
+				tx_num, rx_num);
 		buf += cnt;
 		count += cnt;
-	}
-	break;
-/* tddi f54 test reporting + */
-case F54_FULL_RAW_CAP_TDDI:
-	printk("start F54_FULL_RAW_CAP_TDDI\n");
-	report_data_u16 = (unsigned short *)f54->report_data;
-	cnt = snprintf(buf, PAGE_SIZE - count, "tx = %d\nrx = %d\n\n",
-			tx_num, rx_num);
-	buf += cnt;
-	count += cnt;
 
-	for (ii = 0; ii < tx_num; ii++) {
-		for (jj = 0; jj < (rx_num - 1); jj++) {
-			cnt = snprintf(buf, PAGE_SIZE - count, "%-5d ",
-					*report_data_u16);
-			if (*report_data_16 <= 1700 || *report_data_16 >= 2300){
-				if ((jj == 24) && (ii != 1) && (ii != 6) && (ii != 12)){
-					check_ito_test_flag = 1;
-				} else{
-					check_ito_test_flag = 0;
+		for (ii = 0; ii < tx_num; ii++) {
+			for (jj = 0; jj < (rx_num - 1); jj++) {
+				cnt = snprintf(buf, PAGE_SIZE - count, "%-5d ",
+						*report_data_u16);
+				if(*report_data_16 <= 1700 || *report_data_16 >= 2300 ){
+					if((jj == 24) && (ii !=1)&&(ii !=6)&&(ii != 12)){
+						check_ito_test_flag=1;
+					} else{
+						check_ito_test_flag=0;
+					}
+				}else{
+					check_ito_test_flag=0;
 				}
-			}else{
-				check_ito_test_flag = 0;
+				report_data_u16++;
+				buf += cnt;
+				count += cnt;
 			}
-			report_data_u16++;
-			buf += cnt;
-			count += cnt;
-		}
-		cnt = snprintf(buf, PAGE_SIZE - count, "%-5d\n",
-				*report_data_u16);
-		report_data_u16++;
-		buf += cnt;
-		count += cnt;
-	}
-	if (1 == check_ito_test_flag){
-		cnt = snprintf(buf, PAGE_SIZE - count,"fail\n");
-		buf += cnt;
-		count += cnt;
-		printk("[synaptics]ITO test fail\n");
-	}else{
-		cnt = snprintf(buf, PAGE_SIZE - count,"pass\n");
-		buf += cnt;
-		count += cnt;
-		printk("[synaptics]ITO test pass\n");
-	}
-	break;
-case F54_EE_SHORT_TDDI:
-	printk("start F54_EE_SHORT_TDDI\n");
-	report_data_u16 = (unsigned short *)f54->report_data;
-	cnt = snprintf(buf, PAGE_SIZE - count, "tx = %d\nrx = %d\n\n",
-			tx_num, rx_num);
-	buf += cnt;
-	count += cnt;
-
-	for (ii = 0; ii < tx_num; ii++) {
-		for (jj = 0; jj < (rx_num - 1); jj++) {
-			cnt = snprintf(buf, PAGE_SIZE - count, "%-4d ",
+			cnt = snprintf(buf, PAGE_SIZE - count, "%-5d\n",
 					*report_data_u16);
 			report_data_u16++;
 			buf += cnt;
 			count += cnt;
 		}
-		cnt = snprintf(buf, PAGE_SIZE - count, "%-4d\n",
-				*report_data_u16);
-		report_data_u16++;
+		if(1==check_ito_test_flag){
+			cnt = snprintf(buf, PAGE_SIZE - count,"fail\n");
+			buf += cnt;
+			count += cnt;
+			printk("[synaptics]ITO test fail\n");
+		}else{
+			cnt = snprintf(buf, PAGE_SIZE - count,"pass\n");
+			buf += cnt;
+			count += cnt;
+			printk("[synaptics]ITO test pass\n");
+		}
+		break;
+	case F54_EE_SHORT_TDDI:
+		printk("start F54_EE_SHORT_TDDI\n");
+		report_data_u16 = (unsigned short *)f54->report_data;
+		cnt = snprintf(buf, PAGE_SIZE - count, "tx = %d\nrx = %d\n\n",
+				tx_num, rx_num);
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < tx_num; ii++) {
-		for (jj = 0; jj < (rx_num - 1); jj++) {
-			cnt = snprintf(buf, PAGE_SIZE - count, "%-4d ",
+
+		for (ii = 0; ii < tx_num; ii++) {
+			for (jj = 0; jj < (rx_num - 1); jj++) {
+				cnt = snprintf(buf, PAGE_SIZE - count, "%-4d ",
+						*report_data_u16);
+				report_data_u16++;
+				buf += cnt;
+				count += cnt;
+			}
+			cnt = snprintf(buf, PAGE_SIZE - count, "%-4d\n",
 					*report_data_u16);
 			report_data_u16++;
 			buf += cnt;
 			count += cnt;
 		}
-		cnt = snprintf(buf, PAGE_SIZE - count, "%-4d\n",
-				*report_data_u16);
-		report_data_u16++;
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
 		buf += cnt;
 		count += cnt;
-	}
-	break;
-/* tddi f54 test reporting - */
-case F54_HIGH_RESISTANCE:
-case F54_FULL_RAW_CAP_MIN_MAX:
-	report_data_16 = (short *)f54->report_data;
-	for (ii = 0; ii < f54->report_size; ii += 2) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "%03d: %d\n",
-				ii / 2, *report_data_16);
-		report_data_16++;
+		for (ii = 0; ii < tx_num; ii++) {
+			for (jj = 0; jj < (rx_num - 1); jj++) {
+				cnt = snprintf(buf, PAGE_SIZE - count, "%-4d ",
+						*report_data_u16);
+				report_data_u16++;
+				buf += cnt;
+				count += cnt;
+			}
+			cnt = snprintf(buf, PAGE_SIZE - count, "%-4d\n",
+					*report_data_u16);
+			report_data_u16++;
+			buf += cnt;
+			count += cnt;
+		}
+		break;
+	/* tddi f54 test reporting - */
+	case F54_HIGH_RESISTANCE:
+	case F54_FULL_RAW_CAP_MIN_MAX:
+		report_data_16 = (short *)f54->report_data;
+		for (ii = 0; ii < f54->report_size; ii += 2) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "%03d: %d\n",
+					ii / 2, *report_data_16);
+			report_data_16++;
+			buf += cnt;
+			count += cnt;
+		}
+		break;
+	case F54_ABS_RAW_CAP:
+	case F54_ABS_HYBRID_RAW_CAP:
+		tx_num += f21->tx_assigned;
+		rx_num += f21->rx_assigned;
+		report_data_u32 = (unsigned int *)f54->report_data;
+		cnt = snprintf(buf, PAGE_SIZE - count, "rx ");
 		buf += cnt;
 		count += cnt;
-	}
-	break;
-case F54_ABS_RAW_CAP:
-case F54_ABS_HYBRID_RAW_CAP:
-	tx_num += f21->tx_assigned;
-	rx_num += f21->rx_assigned;
-	report_data_u32 = (unsigned int *)f54->report_data;
-	cnt = snprintf(buf, PAGE_SIZE - count, "rx ");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < rx_num; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "     %2d", ii);
+		for (ii = 0; ii < rx_num; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "     %2d", ii);
+			buf += cnt;
+			count += cnt;
+		}
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
 
-	cnt = snprintf(buf, PAGE_SIZE - count, "   ");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < rx_num; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "  %5u",
-				*report_data_u32);
-		report_data_u32++;
+		cnt = snprintf(buf, PAGE_SIZE - count, "   ");
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
+		for (ii = 0; ii < rx_num; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "  %5u",
+					*report_data_u32);
+			report_data_u32++;
+			buf += cnt;
+			count += cnt;
+		}
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
+		buf += cnt;
+		count += cnt;
 
-	cnt = snprintf(buf, PAGE_SIZE - count, "tx ");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < tx_num; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "     %2d", ii);
+		cnt = snprintf(buf, PAGE_SIZE - count, "tx ");
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
+		for (ii = 0; ii < tx_num; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "     %2d", ii);
+			buf += cnt;
+			count += cnt;
+		}
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
+		buf += cnt;
+		count += cnt;
 
-	cnt = snprintf(buf, PAGE_SIZE - count, "   ");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < tx_num; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "  %5u",
-				*report_data_u32);
-		report_data_u32++;
+		cnt = snprintf(buf, PAGE_SIZE - count, "   ");
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
-	break;
-case F54_ABS_DELTA_CAP:
-case F54_ABS_HYBRID_DELTA_CAP:
-	tx_num += f21->tx_assigned;
-	rx_num += f21->rx_assigned;
-	report_data_32 = (int *)f54->report_data;
-	cnt = snprintf(buf, PAGE_SIZE - count, "rx ");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < rx_num; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "     %2d", ii);
+		for (ii = 0; ii < tx_num; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "  %5u",
+					*report_data_u32);
+			report_data_u32++;
+			buf += cnt;
+			count += cnt;
+		}
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
+		break;
+	case F54_ABS_DELTA_CAP:
+	case F54_ABS_HYBRID_DELTA_CAP:
+		tx_num += f21->tx_assigned;
+		rx_num += f21->rx_assigned;
+		report_data_32 = (int *)f54->report_data;
+		cnt = snprintf(buf, PAGE_SIZE - count, "rx ");
+		buf += cnt;
+		count += cnt;
+		for (ii = 0; ii < rx_num; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "     %2d", ii);
+			buf += cnt;
+			count += cnt;
+		}
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
+		buf += cnt;
+		count += cnt;
 
-	cnt = snprintf(buf, PAGE_SIZE - count, "   ");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < rx_num; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "  %5d",
-				*report_data_32);
-		report_data_32++;
+		cnt = snprintf(buf, PAGE_SIZE - count, "   ");
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
+		for (ii = 0; ii < rx_num; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "  %5d",
+					*report_data_32);
+			report_data_32++;
+			buf += cnt;
+			count += cnt;
+		}
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
+		buf += cnt;
+		count += cnt;
 
-	cnt = snprintf(buf, PAGE_SIZE - count, "tx ");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < tx_num; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "     %2d", ii);
+		cnt = snprintf(buf, PAGE_SIZE - count, "tx ");
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
+		for (ii = 0; ii < tx_num; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "     %2d", ii);
+			buf += cnt;
+			count += cnt;
+		}
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
+		buf += cnt;
+		count += cnt;
 
-	cnt = snprintf(buf, PAGE_SIZE - count, "   ");
-	buf += cnt;
-	count += cnt;
-	for (ii = 0; ii < tx_num; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "  %5d",
-				*report_data_32);
-		report_data_32++;
+		cnt = snprintf(buf, PAGE_SIZE - count, "   ");
 		buf += cnt;
 		count += cnt;
-	}
-	cnt = snprintf(buf, PAGE_SIZE - count, "\n");
-	buf += cnt;
-	count += cnt;
-	break;
-default:
-	for (ii = 0; ii < f54->report_size; ii++) {
-		cnt = snprintf(buf, PAGE_SIZE - count, "%03d: 0x%02x\n",
-				ii, f54->report_data[ii]);
+		for (ii = 0; ii < tx_num; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "  %5d",
+					*report_data_32);
+			report_data_32++;
+			buf += cnt;
+			count += cnt;
+		}
+		cnt = snprintf(buf, PAGE_SIZE - count, "\n");
 		buf += cnt;
 		count += cnt;
+		break;
+	default:
+		for (ii = 0; ii < f54->report_size; ii++) {
+			cnt = snprintf(buf, PAGE_SIZE - count, "%03d: 0x%02x\n",
+					ii, f54->report_data[ii]);
+			buf += cnt;
+			count += cnt;
+		}
 	}
-}
 
-snprintf(buf, PAGE_SIZE - count, "\n");
-count++;
+	snprintf(buf, PAGE_SIZE - count, "\n");
+	count++;
 
 #ifdef SYNAPTICS_ESD_CHECK
-printk("%s SYNAPTICS_ESD_CHECK is on\n",__func__);
-		queue_delayed_work(rmi4_data->esd_workqueue, &(rmi4_data->esd_work), SYNAPTICS_ESD_CHECK_CIRCLE);
+	printk("%s SYNAPTICS_ESD_CHECK is on\n",__func__);
+			queue_delayed_work(rmi4_data->esd_workqueue, &(rmi4_data->esd_work), SYNAPTICS_ESD_CHECK_CIRCLE);
 #endif
 
-return count;
+	return count;
 }
 
 static ssize_t test_sysfs_read_report_store(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
+		struct device_attribute *attr, const char *buf, size_t count)
 {
-int retval;
-unsigned char timeout = GET_REPORT_TIMEOUT_S * 10;
-unsigned char timeout_count;
-const char cmd[] = {'1', 0};
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval;
+	unsigned char timeout = GET_REPORT_TIMEOUT_S * 10;
+	unsigned char timeout_count;
+	const char cmd[] = {'1', 0};
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = test_sysfs_report_type_store(dev, attr, buf, count);
-if (retval < 0)
-	goto exit;
+	retval = test_sysfs_report_type_store(dev, attr, buf, count);
+	if (retval < 0)
+		goto exit;
 
-retval = test_sysfs_do_preparation_store(dev, attr, cmd, 1);
-if (retval < 0)
-	goto exit;
+	retval = test_sysfs_do_preparation_store(dev, attr, cmd, 1);
+	if (retval < 0)
+		goto exit;
 
-retval = test_sysfs_get_report_store(dev, attr, cmd, 1);
-if (retval < 0)
-	goto exit;
+	retval = test_sysfs_get_report_store(dev, attr, cmd, 1);
+	if (retval < 0)
+		goto exit;
 
-timeout_count = 0;
-do {
-	if (f54->status != STATUS_BUSY)
-		break;
-	msleep(100);
-	timeout_count++;
-} while (timeout_count < timeout);
+	timeout_count = 0;
+	do {
+		if (f54->status != STATUS_BUSY)
+			break;
+		msleep(100);
+		timeout_count++;
+	} while (timeout_count < timeout);
 
-if ((f54->status != STATUS_IDLE) || (f54->report_size == 0)) {
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to read report\n",
-			__func__);
-	retval = -EINVAL;
-	goto exit;
-}
+	if ((f54->status != STATUS_IDLE) || (f54->report_size == 0)) {
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to read report\n",
+				__func__);
+		retval = -EINVAL;
+		goto exit;
+	}
 
-retval = test_sysfs_resume_touch_store(dev, attr, cmd, 1);
-if (retval < 0)
-	goto exit;
+	retval = test_sysfs_resume_touch_store(dev, attr, cmd, 1);
+	if (retval < 0)
+		goto exit;
 
-return count;
+	return count;
 
 exit:
-rmi4_data->reset_device(rmi4_data, false);
+	rmi4_data->reset_device(rmi4_data, false);
 
-return retval;
+	return retval;
 }
 
 static ssize_t test_sysfs_ito_test_result_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
+		struct device_attribute *attr, char *buf)
 {
-	printk("synaptics check_ito_test_flag = %d\n", check_ito_test_flag);
-	if (4 == check_ito_test_flag){
-		return snprintf(buf, PAGE_SIZE, "%s\n","pass");
-	}else{
-		return snprintf(buf, PAGE_SIZE, "%s\n","fail");
-	}
+		printk("synaptics check_ito_test_flag = %d\n", check_ito_test_flag);
+		if(4==check_ito_test_flag){
+			return snprintf(buf, PAGE_SIZE, "%s\n","pass");
+		}else{
+			return snprintf(buf, PAGE_SIZE, "%s\n","fail");
+		}
 }
 
 /* tddi f54 test reporting + */
 static ssize_t test_sysfs_read_report(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count,
-	bool do_preparation, bool do_reset)
+		struct device_attribute *attr, const char *buf, size_t count,
+		bool do_preparation, bool do_reset)
 {
-int retval = count;
-unsigned char timeout = GET_REPORT_TIMEOUT_S * 10;
-unsigned char timeout_count;
-const char cmd[] = {'1', 0};
-struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
+	int retval = count;
+	unsigned char timeout = GET_REPORT_TIMEOUT_S * 10;
+	unsigned char timeout_count;
+	const char cmd[] = {'1', 0};
+	struct synaptics_rmi4_data *rmi4_data = f54->rmi4_data;
 
-retval = test_sysfs_report_type_store(dev, attr, buf, count);
-if (retval < 0)
-	goto exit;
-
-if (do_preparation){
-	retval = test_sysfs_do_preparation_store(dev, attr, cmd, 1);
+	retval = test_sysfs_report_type_store(dev, attr, buf, count);
 	if (retval < 0)
 		goto exit;
-}
-retval = test_sysfs_get_report_store(dev, attr, cmd, 1);
-if (retval < 0)
-	goto exit;
 
-timeout_count = 0;
-do {
-	if (f54->status != STATUS_BUSY)
-		break;
-	msleep(100);
-	timeout_count++;
-} while (timeout_count < timeout);
+	if(do_preparation){
+		retval = test_sysfs_do_preparation_store(dev, attr, cmd, 1);
+		if (retval < 0)
+			goto exit;
+	}
+	retval = test_sysfs_get_report_store(dev, attr, cmd, 1);
+	if (retval < 0)
+		goto exit;
 
-if ((f54->status != STATUS_IDLE) || (f54->report_size == 0)) {
+	timeout_count = 0;
+	do {
+		if (f54->status != STATUS_BUSY)
+			break;
+		msleep(100);
+		timeout_count++;
+	} while (timeout_count < timeout);
 
-	dev_err(rmi4_data->pdev->dev.parent,
-			"%s: Failed to read report\n",
-			__func__);
-	retval = -EINVAL;
-	goto exit;
-}
+	if ((f54->status != STATUS_IDLE) || (f54->report_size == 0)) {
+
+		dev_err(rmi4_data->pdev->dev.parent,
+				"%s: Failed to read report\n",
+				__func__);
+		retval = -EINVAL;
+		goto exit;
+	}
 
 exit:
-if (do_reset)
-	rmi4_data->reset_device(rmi4_data, false);
+	if (do_reset)
+		rmi4_data->reset_device(rmi4_data, false);
 
-return retval;
+	return retval;
 }
 
-static short find_median(short *pdata, int num)
+static short find_median(short* pdata, int num)
 {
-int i,j;
-short temp;
-short *value;
-short median;
+	int i,j;
+	short temp;
+	short *value;
+	short median;
 
-value = (short *)kzalloc(num * sizeof(short), GFP_KERNEL);
+	value = (short *)kzalloc( num * sizeof(short), GFP_KERNEL);
 
-for (i = 0; i < num; i++)
-	*(value+i) = *(pdata+i);
+	for(i=0; i < num; i++)
+		*(value+i) = *(pdata+i);
 
 
-for (i = 1; i <= num-1; i++)
+	for ( i=1; i <= num-1; i++)
 	{
-		for (j = 1; j <= num-i; j++)
+		for ( j=1; j <= num-i; j++)
 		{
 			if (*(value+j-1) <= *(value+j))
 			{
 			   temp = *(value+j-1);
-			   *(value+j-1) = *(value+j);
+			   *(value+j-1)= *(value+j);
 			   *(value+j) = temp;
 			}
 			else
@@ -3491,12 +3491,12 @@ for (i = 1; i <= num-1; i++)
 	}
 
 
-	if (num % 2 == 0)
-		median = (*(value+(num/2 -1)) + *(value+(num/2)))/2;
+	if ( num % 2 == 0)
+		median = ( *(value+(num/2 -1)) + *(value+(num/2)) )/2;
 	else
 		median = *(value+(num/2));
 
-	if (value)
+	if(value)
 		kfree(value);
 
 	return median;
@@ -3543,7 +3543,7 @@ static int tddi_ratio_calculation(signed short *p_image)
 	}
 
 	p_right_column_buf = (signed short *) kzalloc(right_size * rx_num * sizeof(short), GFP_KERNEL);
-	if (!p_right_column_buf) {
+	if (!p_right_column_buf ) {
 		dev_err(rmi4_data->pdev->dev.parent,
 				"%s: Failed to alloc mem for p_right_column_buf\n", __func__);
 		retval = -ENOMEM;
@@ -3551,7 +3551,7 @@ static int tddi_ratio_calculation(signed short *p_image)
 	}
 
 	p_left_column_buf = (signed short *) kzalloc(left_size * rx_num * sizeof(short), GFP_KERNEL);
-	if (!p_left_column_buf) {
+	if (!p_left_column_buf ) {
 		dev_err(rmi4_data->pdev->dev.parent,
 				"%s: Failed to alloc mem for p_left_column_buf\n", __func__);
 		retval = -ENOMEM;
@@ -3838,7 +3838,7 @@ static ssize_t test_sysfs_tddi_ee_short_show(struct device *dev,
 	kfree(g_tddi_ee_short_data_output);
 	g_tddi_ee_short_data_output = NULL;
 
-	if (!fail_count)
+	if(!fail_count)
 		check_ito_test_flag += 1;
 
 	return snprintf(buf, PAGE_SIZE, "%s\n", (fail_count == 0) ? "PASS" : "FAIL");
@@ -3972,7 +3972,7 @@ static ssize_t test_sysfs_tddi_noise_store(struct device *dev,
 			max = max_t(signed short, g_tddi_noise_data_output[i*rx_num + j], max);
 #endif
 
-			if (g_tddi_noise_data_output[i*rx_num + j] > NOISE_TEST_LIMIT)  {
+			if (g_tddi_noise_data_output[i*rx_num + j] > NOISE_TEST_LIMIT )  {
 				dev_err(f54->rmi4_data->pdev->dev.parent,
 						"%s: fail at (tx%-2d, rx%-2d) = %-4d (limit = %d)\n",
 						__func__, i, j, g_tddi_noise_data_output[i*rx_num + j], NOISE_TEST_LIMIT);
@@ -4033,7 +4033,7 @@ static ssize_t test_sysfs_tddi_noise_show(struct device *dev,
 	kfree(g_tddi_noise_data_output);
 	g_tddi_noise_data_output = NULL;
 
-	if (!fail_count)
+	if(!fail_count)
 		check_ito_test_flag += 1;
 
 	return snprintf(buf, PAGE_SIZE, "%s\n", (fail_count == 0) ? "PASS" : "FAIL");
@@ -4144,9 +4144,9 @@ static ssize_t test_sysfs_tddi_full_raw_show(struct device *dev,
 				fail_count ++;
 			}*/
 			/*changed by HQ-zmc 20171025*/
-			if (!tddi_full_raw_limit_lower || !tddi_full_raw_limit_upper)
+			if(!tddi_full_raw_limit_lower||!tddi_full_raw_limit_upper)
 				return snprintf(buf, PAGE_SIZE, "%s\n", "fail: tddi_full_raw_limit == NULL");
-			if (((*report_data_16) < (*(tddi_full_raw_limit_lower+k))) || ((*report_data_16) > (*(tddi_full_raw_limit_upper+k)))) {
+			if (((*report_data_16) < (*(tddi_full_raw_limit_lower+k)))|| ((*report_data_16) > (*(tddi_full_raw_limit_upper+k)))) {
 				fail_count ++;
 			}
 			k++;
@@ -4191,7 +4191,7 @@ static ssize_t test_sysfs_tddi_full_raw_show(struct device *dev,
 	kfree(g_tddi_full_raw_data_output);
 	g_tddi_full_raw_data_output = NULL;
 
-	if (!fail_count)
+	if(!fail_count)
 		check_ito_test_flag += 1;
 
 	return snprintf(buf, PAGE_SIZE, "%s\n", (fail_count == 0) ? "PASS" : "FAIL");
@@ -4348,7 +4348,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 			p_rt92_image_1[i * rx_num + j] =
-				(signed short)(p_report_data_8[k] & 0xff) | (signed short)(p_report_data_8[k + 1] << 8);
+				(signed short)(p_report_data_8[k] & 0xff ) | (signed short)(p_report_data_8[k + 1] << 8);
 
 			k += 2;
 		}
@@ -4402,7 +4402,7 @@ static ssize_t test_sysfs_tddi_amp_open_store(struct device *dev,
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 			p_rt92_image_2[i * rx_num + j] =
-				(signed short)(p_report_data_8[k] & 0xff) | (signed short)(p_report_data_8[k + 1] << 8);
+				(signed short)(p_report_data_8[k] & 0xff ) | (signed short)(p_report_data_8[k + 1] << 8);
 
 			k += 2;
 		}
@@ -4824,7 +4824,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 			p_rt92_image_1[i * rx_num + j] =
-				(signed short)(p_report_data_8[k] & 0xff) | (signed short)(p_report_data_8[k + 1] << 8);
+				(signed short)(p_report_data_8[k] & 0xff ) | (signed short)(p_report_data_8[k + 1] << 8);
 
 			k += 2;
 		}
@@ -4886,7 +4886,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_store(struct device *dev,
 	for (i = 0; i < tx_num; i++) {
 		for (j = 0; j < rx_num; j++) {
 			p_rt92_image_2[i * rx_num + j] =
-				(signed short)(p_report_data_8[k] & 0xff) | (signed short)(p_report_data_8[k + 1] << 8);
+				(signed short)(p_report_data_8[k] & 0xff ) | (signed short)(p_report_data_8[k + 1] << 8);
 
 			k += 2;
 		}
@@ -5071,7 +5071,7 @@ static ssize_t test_sysfs_tddi_amp_electrode_open_show(struct device *dev,
 	kfree(g_tddi_amp_open_data_output);
 	g_tddi_amp_open_data_output = NULL;
 
-	if (!fail_count)
+	if(!fail_count)
 		check_ito_test_flag += 1;
 
 	return snprintf(buf, PAGE_SIZE, "%s\n", (fail_count == 0) ? "PASS" : "FAIL");
@@ -5276,7 +5276,7 @@ static int tp_data_dump_proc_show(struct seq_file *m, void *v) {
 	return 0;
 }
 
-static int tp_data_dump_proc_open(struct inode *inode, struct file *file) {
+static int tp_data_dump_proc_open(struct inode *inode, struct file * file) {
 	return single_open(file, tp_data_dump_proc_show, NULL);
 }
 
@@ -7403,7 +7403,7 @@ static void synaptics_rmi4_test_attn(struct synaptics_rmi4_data *rmi4_data,
 static int synaptics_rmi4_test_init(struct synaptics_rmi4_data *rmi4_data)
 {
 	int retval;
-	unsigned char lockdown[20] = {0};
+	unsigned char lockdown[20]={0};
 
 	if (f54) {
 		dev_dbg(rmi4_data->pdev->dev.parent,
@@ -7481,16 +7481,16 @@ static int synaptics_rmi4_test_init(struct synaptics_rmi4_data *rmi4_data)
 	f54->status = STATUS_IDLE;
 
 	/*add by zmc 20171011*/
-	if (get_tddi_lockdown_data(lockdown, 20) < 0){
+	if(get_tddi_lockdown_data(lockdown, 20)<0){
 			printk("%s:read lockdown fail\n",__func__);
 		}
 		printk("lockdown[7]: %d\n",lockdown[7]);
-		if (lockdown[7] == 1){
+		if(lockdown[7] == 1){
 			printk("%s:HQ-zmc: tianma 6.0\n",__func__);
 			tddi_full_raw_limit_lower = tddi_full_raw_limit_lower_G60;
 			tddi_full_raw_limit_upper = tddi_full_raw_limit_upper_G60;
 		}
-		else if (lockdown[7] == 2){
+		else if(lockdown[7] == 2){
 			printk("%s:HQ-zmc: tianma 5.5\n",__func__);
 			tddi_full_raw_limit_lower = tddi_full_raw_limit_lower_G55;
 			tddi_full_raw_limit_upper = tddi_full_raw_limit_upper_G55;
